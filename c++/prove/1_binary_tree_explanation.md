@@ -87,7 +87,7 @@ the average search time for a binary tree is log2N. (a)
 (a) Perchè il binary tree ha log2(N) layer? N=n° di elementi?
 (b) Perchè anniamo che
 - tempo medio di ricerca di un elemento =   log2N
-- tempo per riempire tutto il tree      = N*log2N
+- tempo per riempire tutto il tree      = N*log2N (search/insert)
 ??
 
 Come ci si divide il lavoro? Funzioni diverse a testa??

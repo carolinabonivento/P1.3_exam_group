@@ -17,7 +17,11 @@
 */
 struct node
 {
+  // pair: contiene 2 elementi, per accedere: first, second
   int key_value;
+  // valore: elisa --> template (struttura studente,
+  // chiave: 1 --> template: comparison solo sulle chiavi
+  // ovreload <: lettera per lettera
   node *left;
   node *right;
 };
