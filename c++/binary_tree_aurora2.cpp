@@ -12,6 +12,7 @@ using std::endl; //instead of loading all the std::functions, only these one, fo
 template <typename kt, typename vt> class Tree; //class declaration
 template <typename kt, typename vt> class Iterator; //class declaration needed so that Tree compiles
 
+
 // *** BEGIN CLASS NODE ********
 
 template <typename kt, typename vt>
@@ -21,7 +22,8 @@ public:
     
     kt key;
     vt val;
-    node* left,right;
+    node* left;
+    node* right;
     node* up = nullptr;
     node();  //add default constructor
     node (const kt& k = kt(), const vt& v = vt(), node* l = nullptr, node* r = nullptr): key(k),val(v),left(l), right(r) {}  //costructor con i valori di default
@@ -48,7 +50,10 @@ class Tree
     private:
  
     Iterator<kt,vt> insert(const kt& k, const vt& v);  //since iterator class is defined outside Tree, here requires <kt,vt>
-  
+    
+    //helper function private to implement recursion
+    node<kt,vt>* insert_helper(kt key, vt val, node<kt,vt>* t);
+    
     node<kt,vt>* root;  //std::unique_ptr< node<kt,vt> > root=nullptr;
     unsigned int _size; //private variable to keep tree size
 
@@ -56,10 +61,9 @@ class Tree
     public:
     
     Tree();
+    void insert_noiter(kt key, vt val) {root = insert_helper(key, val, root);}
     
   
-  
-
 
 
 
@@ -70,6 +74,32 @@ Tree<kt,vt>::Tree(){  //default cosntructor for Tree
     _size=0;
     root=nullptr;
 }
+
+
+template<typename kt, typename vt>
+node<kt,vt>*  Tree<kt,vt>::insert_helper(kt key, vt val, node<kt,vt>* t)
+{
+    
+    if(t == nullptr)
+    {
+        cout << "creazione nodo: " << key << endl;
+        t = new node<kt,vt>(key,val,nullptr,nullptr);
+        _size = _size+1;
+        
+    }
+    else if(key < t->key){
+        
+        t->left = insert_helper(key, val, t->left); //cout << "node current L "<< t->key << endl;
+        t->left->up = t;
+    }
+    else if(key > t->key){
+        
+        t->right = insert_helper(key, val, t->right); //cout << "node current R "<< t->key << endl;
+        t->right->up = t;
+    }
+    return t;
+}
+
 
 
 
@@ -106,6 +136,18 @@ public:
 int main(){
     
     Tree<int,int> t{};
+    
+    
+    cout << "Insert nodes... " << endl;
+    t.insert_noiter(7,7);
+    t.insert_noiter(3,3);
+    t.insert_noiter(13,13);
+    t.insert_noiter(14,14);
+    t.insert_noiter(4,4);
+    
+    
+   
+
     
 }
 
