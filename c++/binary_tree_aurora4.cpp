@@ -134,7 +134,7 @@ node<kt,vt>*  Tree<kt,vt>::insert_helper(kt key, vt val, node<kt,vt>* t) //key,v
                          //every time i define a newnode a redefine the parent
         
     }
-    else if(key < t->key){ //if the key of the new node is smaller than put it left
+    else if(key <= t->key){ //if the key of the new node is smaller than put it left
         
         t->left = insert_helper(key, val, t->left); //cout << "node current L "<< t->key << endl;
         t->left->up = t;
@@ -247,7 +247,7 @@ int main(){
     t.insert_noiter(18,18);
     t.insert_noiter(27,27);
     t.insert_noiter(35,35);
-    t.insert_noiter(8,8);
+    t.insert_noiter(9,9);
     
     t.print_preorder();
     t.print();
