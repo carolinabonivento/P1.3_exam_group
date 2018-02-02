@@ -23,10 +23,15 @@ only has one child node, so it becomes as if it were a linked list
 in terms of speed.
 7. The typical representation of a binary tree looks like the following:
                          10
+			 
                        /    \
+		       
                      6      14
+		     
                     / \    /  \
+		    
                    5   8  11  18
+		   
 ## Functions
 ### Insert
 1. To insert data into a binary tree involves a function searching for
