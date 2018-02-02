@@ -22,16 +22,14 @@ or retrieval of data. The worst case scenario is a tree in which each node
 only has one child node, so it becomes as if it were a linked list
 in terms of speed.
 7. The typical representation of a binary tree looks like the following:
-                         10
-			 
-                       /    \
-		       
-                     6      14
-		     
-                    / \    /  \
-		    
-                   5   8  11  18
-		   
+```
+                                   10			 
+                                 /    \		       
+                               6      14	     
+                              / \    /  \	    
+                             5   8  11  18
+		   ```
+
 ## Functions
 ### Insert
 1. To insert data into a binary tree involves a function searching for
@@ -63,7 +61,7 @@ the right child node.
 2. It is also necessary to check to ensure that the left or right
 child node actually exists before calling the function on the node.
 3. Because binary trees have log2N layers,
-the average search time for a binary tree is log2N.
-To fill an entire binary tree, sorted, takes roughly N*log2N.
+the average search time for a binary tree is ```log2N```.
+To fill an entire binary tree, sorted, takes roughly ```N*log2N```.
 
 ... TO BE CONTINUED ...
