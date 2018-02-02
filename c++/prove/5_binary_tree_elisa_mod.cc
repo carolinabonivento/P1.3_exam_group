@@ -138,7 +138,6 @@ Node<kt,vt>* Tree<kt,vt>::insert_helper(kt key, vt val, Node<kt,vt>* t) // (2)
   if(t == nullptr) 
     {
       cout << "Inserting node: " << key << endl;
-      //   t = new Node<kt,vt> (key,val,nullptr); //  --> by AURO, but error
       t = new Node<kt,vt> (key,val,nullptr,nullptr, nullptr); // NOT nullptr
       _size = _size+1;        
     }
