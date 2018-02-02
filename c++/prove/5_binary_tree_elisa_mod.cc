@@ -52,6 +52,8 @@ private:
   Node<kt,vt>* find_helper(kt key, vt val, Node<kt,vt>* t); // (1)
   Node<kt,vt>* insert_helper(kt key, vt val, Node<kt,vt>* t); // (2)  
   void clear_helper(Node<kt,vt>* n); // (3) 
+  void inorder(Node<kt,vt>* t);
+  void preorder(Node<kt,vt>* t);
 
   
 public:
@@ -66,6 +68,10 @@ public:
   Node<kt,vt>* find_noiter(kt key, vt val) {return find_helper(key, val, root);} // (6)
   void insert_noiter(kt key, vt val) {root = insert_helper(key, val, root);} // (7)
   void clear() {clear_helper(root);} // (8)
+
+  void print() {cout << "Print inorder: key (parent)" <<endl; inorder(root); cout << endl ;} // prints in order, sorting usinh key value. It doesn't need iterators. Use inorder() helper function (private). 
+  void print_preorder() {cout << "Print preorder: key " <<endl; preorder(root); cout << endl;} //print preorder prints the tree in preorder. It doesn't need iterators. Use preorder () helper function (private). 
+
 
 };
 // ------------------------ CLASS TREE ENDS ----------------------------
@@ -126,7 +132,37 @@ void Tree<kt,vt>::clear_helper(Node<kt,vt>* n){ // (3)
   delete n;
   n = nullptr;
 }
+
 // ----------------------------------------------------------------------
+
+
+template <typename kt, typename vt>
+void Tree<kt,vt>::inorder(Node<kt,vt>* t) //function for in-order traversal
+{
+    if(t == nullptr)
+        return;
+    inorder(t->left); ////cout << t->key <<" "; //  decomment for standard print without up node
+    
+    
+    if(t != root) cout << t->key <<" (" << t->up->key << ") ";  //print with the parent node also (comment to simplify output)
+    else cout << t->key <<" " << "(root) ";                     // print with parent (comment to simplify output)
+    inorder(t->right);
+}
+
+
+// ----------------------------------------------------------------------
+
+template <typename kt, typename vt>
+void Tree<kt,vt>::preorder( Node<kt,vt>* t) //function for pre-order traversal
+{
+    if (t == nullptr)
+        return;
+    
+    cout << t->key << " ";
+    preorder(t->left);
+    preorder(t->right);
+}
+
 
 // ************************ ITERATOR STARTS ************************
 template<typename kt, typename vt>
@@ -186,6 +222,17 @@ int main()
   tree.insert_noiter(2,2);
   tree.insert_noiter(3,3);
   tree.insert_noiter(2,2);
+  tree.insert_noiter(1,1);
+  tree.insert_noiter(6,6);
+  tree.insert_noiter(10,10);
+  tree.insert_noiter(8,8);
+  tree.insert_noiter(18,18);
+  tree.insert_noiter(27,27);
+  tree.insert_noiter(35,35);
+  tree.insert_noiter(9,9);
+    
+  tree.print_preorder(); /* PRINT */
+  tree.print();/* PRINT */
 
   Tree<int, int>::Iterator first = tree.begin();
   Tree<int, int>::Iterator last = tree.end();
