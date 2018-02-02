@@ -29,5 +29,7 @@ remote repo
 
 # ALBERT DIXIT
 1. insert deve restituire un iteratore (e non un puntatore al nodo)
-2. Implementare funzione left_most
-3. Up: se posso andare a sinistra
+
+2. If I'm the
+* RIGHT child: my up = my parent's up  (t->right->up = t->up)
+* LEFT child: my up = my parent (t->left->up = t;)
