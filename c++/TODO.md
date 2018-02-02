@@ -26,3 +26,8 @@ remote repo
 
 # QUESTIONS FOR ALBERTO
 1. Va bene se ignoriamo un nodo uguale ad un altro? Vedere implementazione
+
+# ALBERT DIXIT
+1. insert deve restituire un iteratore (e non un puntatore al nodo)
+2. Implementare funzione left_most
+3. Up: se posso andare a sinistra
