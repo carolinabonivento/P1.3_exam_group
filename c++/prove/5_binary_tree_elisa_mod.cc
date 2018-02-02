@@ -48,8 +48,10 @@ class Tree
 private:
   Node<kt,vt>* root;
   unsigned int _size;
-  Node<kt,vt>* insert_helper(kt key, vt val, Node<kt,vt>* t);
-  void clear_helper(Node<kt,vt>* n);
+  
+  Node<kt,vt>* find_helper(kt key, vt val, Node<kt,vt>* t); // (1)
+  Node<kt,vt>* insert_helper(kt key, vt val, Node<kt,vt>* t); // (2)  
+  void clear_helper(Node<kt,vt>* n); // (3) 
 
   
 public:
@@ -60,8 +62,10 @@ public:
   class ConstIterator; 
   ConstIterator cbegin() const {return ConstIterator {root};}
   ConstIterator cend() const {return ConstIterator {nullptr};}
-  void insert_noiter(kt key, vt val) {root = insert_helper(key, val, root);}
-  void clear() {clear_helper(root);}
+  
+  Node<kt,vt>* find_noiter(kt key, vt val) {return find_helper(key, val, root);} // (6)
+  void insert_noiter(kt key, vt val) {root = insert_helper(key, val, root);} // (7)
+  void clear() {clear_helper(root);} // (8)
 
 };
 // ------------------------ CLASS TREE ENDS ----------------------------
@@ -73,11 +77,30 @@ Tree<kt,vt>::Tree()
 }
 // ----------------------------------------------------------------------
 template<typename kt, typename vt>
-Node<kt,vt>* Tree<kt,vt>::insert_helper(kt key, vt val, Node<kt,vt>* t)
+Node<kt,vt>* Tree<kt,vt>::find_helper(kt key, vt val, Node<kt,vt>* t) // (1)
+{
+  if (t!=NULL)
+    {
+      if (key == t->key)
+	cout << "Node found." << endl;
+	return t;
+      if (key < t->key)
+	return find_helper(key, val, t->left);
+      else
+	return find_helper(key, val, t->right);
+    }
+  else
+    return NULL;
+  //  cout << "Node not found." << endl;
+}
+  
+// ----------------------------------------------------------------------
+template<typename kt, typename vt>
+Node<kt,vt>* Tree<kt,vt>::insert_helper(kt key, vt val, Node<kt,vt>* t) // (2) 
 {
   if(t == nullptr) 
     {
-      cout << "creazione nodo: " << key << endl;
+      cout << "Inserting node: " << key << endl;
       //   t = new Node<kt,vt> (key,val,nullptr); //  --> by AURO, but error
       t = new Node<kt,vt> (key,val,nullptr,nullptr, nullptr);
       _size = _size+1;        
@@ -94,7 +117,7 @@ Node<kt,vt>* Tree<kt,vt>::insert_helper(kt key, vt val, Node<kt,vt>* t)
 }
 // ----------------------------------------------------------------------
 template <typename kt, typename vt>
-void Tree<kt,vt>::clear_helper(Node<kt,vt>* n){
+void Tree<kt,vt>::clear_helper(Node<kt,vt>* n){ // (3) 
   if( n == nullptr) return;
     
   clear_helper(n->left);// if(n->left != nullptr) clear_helper(n->left);
@@ -109,10 +132,11 @@ void Tree<kt,vt>::clear_helper(Node<kt,vt>* n){
 template<typename kt, typename vt>
 class Tree<kt,vt>::Iterator
 {
-private:
-  Node<kt,vt> *current;
+  //private:
+  // Node<kt,vt> *current;
   
-public:  
+public:
+  Node<kt,vt> *current;
   Iterator(Node<kt,vt>* n): current{n}{} 
   std::pair<kt,vt> operator->() {return (*this);} 
   std::pair<kt,vt> operator*() const {return{current->key, current->value};}
@@ -150,7 +174,6 @@ public:
 };
 // ++++++++++++++++++ CONST ITERATOR ENDS ++++++++++++++++++
 
-
 // ************************************************************************
 // MAIN
 // ************************************************************************
@@ -158,32 +181,34 @@ int main()
 {
   Tree<int, int>tree{};
 
-  cout << "Insert nodes... " << endl;
+  cout << "1. INSERTING Nodes " << endl;
   tree.insert_noiter(1,1);
   tree.insert_noiter(2,2);
   tree.insert_noiter(3,3);
+  tree.insert_noiter(2,2);
 
+  Tree<int, int>::Iterator first = tree.begin();
+  Tree<int, int>::Iterator last = tree.end();
   
-    Tree<int, int>::Iterator last = tree.end();
+  cout << "The first node of the binary tree is " << first.current->key << endl;
+  /*
+ cout << "The last node of the binary tree is " << last.current->key << endl;
+SEGMENTATION FAULT IN PRINTING
+  */  
+  
+  /*
     for(Tree<int,int>::Iterator it = tree.begin(); it !=last; ++it)
     {
     cout << "The tree has 3 elements" << endl;
-    }
+    }*/
+
+  cout << "2. SEARCHING Nodes" << endl;
   
-      
+  tree.find_noiter(1,1);
+  tree.find_noiter(4,4);
+
+  cout << "3. DELETING Nodes" << endl;
+  
   tree.clear();
   return 0;
 }
-
-
-/*
-  ALTRE DOMANDE PER AURORA
-  (1) Ma se mettiamo la classe Nodo all'interno della classe Tree
-  templata su kt e vt
-  anche il Nodo erediterà il fatto di essere templato?
-  (2) Dobbiamo templare anche il Nodo?
-  Se provo a NON templarlo ad un certo punto mi fa:
-  5_binary_tree_elisa.cc:111:1: error: ‘Node’ does not name a type
-  Node* Tree<kt,vt>::insert_helper(kt key, vt val, Node* t)
-  (3) Warnings: non usa puntatori LEFT, RIGHT, UP
-*/
