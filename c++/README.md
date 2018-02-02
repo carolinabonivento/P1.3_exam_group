@@ -28,8 +28,7 @@ in terms of speed.
                                6      14	     
                               / \    /  \	    
                              5   8  11  18
-		   ```
-
+```
 ## Functions
 ### Insert
 1. To insert data into a binary tree involves a function searching for
