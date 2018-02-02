@@ -55,10 +55,10 @@ private:
 public:
   Tree(); 
   class Iterator; 
-  Iterator begin() {return Iterator {root.get()};}
+  Iterator begin() {return Iterator {root};}
   Iterator end() {return Iterator {nullptr};}
   class ConstIterator; 
-  ConstIterator cbegin() const {return ConstIterator {root.get()};}
+  ConstIterator cbegin() const {return ConstIterator {root};}
   ConstIterator cend() const {return ConstIterator {nullptr};}
   void insert_noiter(kt key, vt val) {root = insert_helper(key, val, root);}
   void clear() {clear_helper(root);}
@@ -120,7 +120,7 @@ public:
   // ++it
   Iterator& operator++() 
   {
-    current = current->up.get(); 
+    current = current->up; 
     return *this; 
   }
   // it++
@@ -163,13 +163,13 @@ int main()
   tree.insert_noiter(2,2);
   tree.insert_noiter(3,3);
 
-  /*
+  
     Tree<int, int>::Iterator last = tree.end();
     for(Tree<int,int>::Iterator it = tree.begin(); it !=last; ++it)
     {
     cout << "The tree has 3 elements" << endl;
     }
-  */
+  
       
   tree.clear();
   return 0;
@@ -181,13 +181,9 @@ int main()
   (1) Ma se mettiamo la classe Nodo all'interno della classe Tree
   templata su kt e vt
   anche il Nodo erediterà il fatto di essere templato?
-
   (2) Dobbiamo templare anche il Nodo?
   Se provo a NON templarlo ad un certo punto mi fa:
-
   5_binary_tree_elisa.cc:111:1: error: ‘Node’ does not name a type
   Node* Tree<kt,vt>::insert_helper(kt key, vt val, Node* t)
-
-
   (3) Warnings: non usa puntatori LEFT, RIGHT, UP
 */
