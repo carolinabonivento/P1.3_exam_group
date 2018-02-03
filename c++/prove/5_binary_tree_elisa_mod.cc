@@ -2,6 +2,7 @@
 #include <memory> // std::unique_ptr
 #include <utility> // std::pair, std::make_pair
 #include <iterator>
+#include <cstdbool>
 
 using std::cout;
 using std::endl;
@@ -9,18 +10,18 @@ using std::endl;
 // FUNCTION DECLARATION AND DEFINITION
 // **************************************************************************
 /*
-  (1) insert, used to insert a new pair key-value. (Alberto ne ha fatte 2)
-  (2) print, used to print key: value of each node. Note that the output 
+  (1) insert, used to insert a new pair key-value. (Alberto ne ha fatte 2) --> DONE
+  (2) print, used to print key: value of each node. Note that the output   --> DONE
   should be in order with respect to the keys.
-  (3) clear(), clear the content of the tree. (DA zero)
-  (4) begin(), return an iterator to the first node (which likely will not 
+  (3) clear(), clear the content of the tree. (DA zero)                    --> DONE
+  (4) begin(), return an iterator to the first node (which likely will not --> DONE
   be the root node)
-  (5) end(), return a proper iterator
-  (6) cbegin(), return a const_iterator to the first node (da zero)
-  (7) cend(), return a proper const_iterator ( da zero)
-  (8) balance(), balance the tree. (da zero, sorting con funzione della 
+  (5) end(), return a proper iterator                                      --> DONE
+  (6) cbegin(), return a const_iterator to the first node (da zero)        --> DONE
+  (7) cend(), return a proper const_iterator ( da zero)                    --> DONE
+  (8) balance(), balance the tree. (da zero, sorting con funzione della    --> vedere Auro
 std::lib)
-  (9) find, find a given key and return an iterator to that node. If the key 
+  (9) find, find a given key and return an iterator to that node. If the key --> DONE
   is not found returns end(); (simile al print)
 */
 template <typename kt, typename vt> class Node;
@@ -57,7 +58,6 @@ class Tree
 {
 private:
   Node<kt,vt>* root;
-  unsigned int _size;
   
   Node<kt,vt>* find_helper(kt key, vt val, Node<kt,vt>* t); // (1)
   Node<kt,vt>* insert_helper(kt key, vt val, Node<kt,vt>* t); // (2)  
@@ -67,6 +67,7 @@ private:
 
   
 public:
+  unsigned int _size;
   Tree();
   class Iterator;
   
@@ -74,15 +75,10 @@ public:
     //  if(root!=nullptr)
       return Iterator {root->left_most()};
       }
- 
-  
- 
-
-    
-  //  Iterator begin() {return Iterator {root};}
   Iterator end() {return Iterator {nullptr};}
+  
   class ConstIterator; 
-  ConstIterator cbegin() const {return ConstIterator {root};}
+  ConstIterator cbegin() const {return ConstIterator {root->left_most()};}
   ConstIterator cend() const {return ConstIterator {nullptr};}
   
   Node<kt,vt>* find_noiter(kt key, vt val) {return find_helper(key, val, root);}
@@ -116,21 +112,27 @@ Tree<kt,vt>::Tree()
 template<typename kt, typename vt>
 Node<kt,vt>* Tree<kt,vt>::find_helper(kt key, vt val, Node<kt,vt>* t) // (1)
 {
+  bool found{false};
   if (t!=nullptr)
     {
       if (key == t->key)
-	cout << "Node found." << endl;
+	cout << "The inserted key = " << key << " = key of the root" << endl;
 	return t;
       if (key < t->key)
 	return find_helper(key, val, t->left);
       else
 	return find_helper(key, val, t->right);
+      found = true;
     }
   else
     return nullptr;
-  //  cout << "Node not found." << endl;
-}
   
+  if (found == true)
+    cout << "Node found" << endl;
+    else
+      cout << "Node not found" << endl;
+}
+
 // ----------------------------------------------------------------------
 template<typename kt, typename vt>
 Node<kt,vt>* Tree<kt,vt>::insert_helper(kt key, vt val, Node<kt,vt>* t) // (2) 
@@ -142,12 +144,12 @@ Node<kt,vt>* Tree<kt,vt>::insert_helper(kt key, vt val, Node<kt,vt>* t) // (2)
       _size = _size+1;        
     }
   else if(key < t->key){ // left child       
-    t->left = insert_helper(key, val, t->left); // ???
+    t->left = insert_helper(key, val, t->left); 
     t->left->up = t;
   }
   else if(key > t->key){ // right child
     t->right = insert_helper(key, val, t->right);
-    t->right->up = t->up; // "up of the right of t"
+    t->right->up = t->up; 
   }
   return t;
 }
@@ -156,9 +158,11 @@ template <typename kt, typename vt>
 void Tree<kt,vt>::clear_helper(Node<kt,vt>* n){ // (3) 
   if( n == nullptr) return;
     
-  clear_helper(n->left);// if(n->left != nullptr) clear_helper(n->left);
-  clear_helper(n->right);// if(n->left != nullptr) clear_helper(n->left);
-    
+  clear_helper(n->left);
+  clear_helper(n->right);
+
+  _size = _size-1;        
+
   delete n;
   n = nullptr;
 }
@@ -178,18 +182,17 @@ void Tree<kt,vt>::print_preorder_helper( Node<kt,vt>* t) //function for pre-orde
 // ----------------------------------------------------------------------
 template <typename kt, typename vt>
 void Tree<kt,vt>::print_inorder_helper(Node<kt,vt>* t) // (5)
-// function for in-order traversal
 {
     if(t == nullptr)
         return;
+    else
     print_inorder_helper(t->left);
-    ////cout << t->key <<" "; //  decomment for standard print without up node
     
     if(t != root)
       cout << t->key << " (" << t->up->key << ") ";
-    //print with the parent node also (comment to simplify output)
-    else cout << t->key <<" " << "(root) ";
-    // print with parent (comment to simplify output)
+    else
+      cout << t->key <<" " << "(root) ";
+    
     print_inorder_helper(t->right);
 }
 // ************************ ITERATOR STARTS ************************
@@ -200,7 +203,6 @@ class Tree<kt,vt>::Iterator
  Node<kt,vt> *current;
   
 public:
-  //Node<kt,vt> *current;
   Iterator(Node<kt,vt>* n): current{n}{} 
   std::pair<kt,vt> operator->() {return (*this);} 
   std::pair<kt,vt> operator*() const {return{current->key, current->value};}
@@ -208,15 +210,13 @@ public:
   // ++it
   Iterator& operator++() 
   {
-    if(current){
-      if(current->Node<kt,vt>::right) // if current righ doesn't pint to null
+    if(current){ // "if the current doesn't point to null.."
+      if(current->Node<kt,vt>::right) // "if the right of the current doesn't point to null.."
 	current = current->right->left_most();
       else
 	current = current->up;
     }
     return *this; 
-    /* current = current->up; 
-       return *this; */
   }
   /*
   // it++
@@ -251,7 +251,7 @@ public:
 // ************************************************************************
 int main()
 {
-  Tree<int, int>tree{};
+  Tree<int, int> tree{};
 
   cout << "1. INSERTING Nodes " << endl;
   tree.insert_noiter(1,1);
@@ -266,20 +266,8 @@ int main()
   tree.insert_noiter(27,27);
   tree.insert_noiter(35,35);
   tree.insert_noiter(9,9);
-    
-  /* tree.print_preorder(); 
-  tree.print_inorder();
-  */
-
-  // Tree<int, int>::Iterator first = tree.begin();
-  //  Tree<int, int>::Iterator last = tree.end();
-  
-  // cout << "The first node of the binary tree is " << first.current->key << endl;
-  /*
- cout << "The last node of the binary tree is " << last.current->key << endl;
-SEGMENTATION FAULT IN PRINTING
-  */  
-  
+  cout << "--------------------------------------------------------------" << endl;							
+  cout << "2b. PRINTING Nodes in order rx to the key (WITH Iterator)" << endl;
   Tree<int,int>::Iterator it = tree.begin();
   Tree<int,int>::Iterator stop = tree.end();
   
@@ -287,27 +275,44 @@ SEGMENTATION FAULT IN PRINTING
     {
       cout << (*it).first << endl;
     }
+  cout << "Now the list has " << tree._size << " elements" << endl;
+  cout << "--------------------------------------------------------------" << endl;							
 
-  /*
-  cout << "2. SEARCHING Nodes" << endl;
+/*
+  cout << "2a. PRINTING Nodes preorder rx to the key (NO Iterator)" << endl;
+  tree.print_preorder(); --> ora non stampa in preorder corretto :(
+
+  cout << "2b. PRINTING Nodes in order rx to the key (NO Iterator)" << endl;
+  tree.print_inorder(); --> ora da segmentation fault :(
+  */
   
-  tree.find_noiter(1,1);
-  tree.find_noiter(4,4);
+  cout << "9. FINDING  Nodes" << endl;
+  
+  tree.find_noiter(2,2); // trova la root
+  tree.find_noiter(1,1); 
+  // tree.find_noiter(4,4);
 
+ 
+  cout << "--------------------------------------------------------------" << endl;							
   cout << "3. DELETING Nodes" << endl;
-  
-  tree.clear();*/
+  tree.clear();
+  cout << "Now the list has " << tree._size << " elements" << endl;
   return 0;
 }
 
 /*
-WARNINGS
-
-
-ITERATOR: where do we use them?
-- print ?
-
 TO DO
-error handling
+-sistemare il codice (ordine!)
+-error handling
+-copy and move semantics
+-testare tutto
+-cambiare key e value (usare anche stringhe)
+-analizzare performance (scambiando anche key e value)
+-usare smart pointers
+-come organizzare std::pair
+-da testare:  
+  std::pair<kt,vt> operator->() {return (*this);} 
+  bool operator==(const Iterator& other)
+  bool operator!=(const Iterator& other) {return !(*this == other);}
 
 */
