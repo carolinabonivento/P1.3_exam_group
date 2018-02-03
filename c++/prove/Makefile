@@ -1,6 +1,6 @@
 SRC = $(wildcard *.cc)
 CXX = c++
-CXXFLAGS = -g -std=c++11 -Wall -Wextra -I ../../lectures/04_error_handling
+CXXFLAGS = -g -std=c++11 -Wall -Wextra
 # used only by the script: 4_simple_vector_implemented_as.cc
 EXE = $(SRC:.cc=.x)
 INC = $(wildcard *.h)
@@ -21,5 +21,3 @@ clean:
 
 .PHONY: clean
 
-
-//First Modify Aurora
