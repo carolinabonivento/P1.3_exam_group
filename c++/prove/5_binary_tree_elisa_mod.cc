@@ -238,7 +238,7 @@ int main()
 {
   Tree<int, int> tree{};
 
-  cout << "1. INSERTING Nodes " << endl;
+  cout << "1. INSERTING Nodes " << endl; // to modify with iterator
   tree.insert_noiter(1,1);
   tree.insert_noiter(2,2);
   tree.insert_noiter(3,3);
@@ -277,14 +277,14 @@ int main()
   tree.find_noiter(4,4);
 
 
-  cout << "9b. FINDING  Nodes (WITH Iterator)" << endl;
-for(; it !=stop; ++it)
+  /* cout << "9b. FINDING  Nodes (WITH Iterator)" << endl;
+  for(; it !=stop; ++it)
     {
       cout << (*it).first << endl;
-    }
+      }*/
 
 
-  if (t!=nullptr)
+/* if (t!=nullptr)
     {
       if (key == t->key){
 	cout << "The inserted key = " << key << " is in the BT" << endl;
@@ -297,7 +297,7 @@ for(; it !=stop; ++it)
     }
   else
     cout << "The inserted key = " << key << " is NOT in the BT" << endl;
-  return nullptr; 
+    return nullptr; */
 
 
  
