@@ -271,11 +271,36 @@ int main()
     tree.print_inorder(); --> ora da segmentation fault :(
   */
   
-  cout << "9. FINDING  Nodes" << endl;
+  cout << "9a. FINDING  Nodes (NO Iterator)" << endl;
   tree.find_noiter(1,1); // trova la root
   tree.find_noiter(2,2); 
   tree.find_noiter(4,4);
-  
+
+
+  cout << "9b. FINDING  Nodes (WITH Iterator)" << endl;
+for(; it !=stop; ++it)
+    {
+      cout << (*it).first << endl;
+    }
+
+
+  if (t!=nullptr)
+    {
+      if (key == t->key){
+	cout << "The inserted key = " << key << " is in the BT" << endl;
+	return t;
+      }
+      if (key < t->key)
+	return find_helper(key, val, t->left);
+      else
+	return find_helper(key, val, t->right);
+    }
+  else
+    cout << "The inserted key = " << key << " is NOT in the BT" << endl;
+  return nullptr; 
+
+
+ 
  
   cout << "--------------------------------------------------------------" << endl;							
   cout << "3. DELETING Nodes" << endl;
@@ -304,4 +329,6 @@ int main()
   - print (eliminare il print_noiter e sostuituirlo con quanto messo nel main)
   - insert (modificare il nostro insert)
   - find (modificarla)
+
+http://www.cplusplus.com/forum/general/147955/
 */
