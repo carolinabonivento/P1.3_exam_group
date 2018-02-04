@@ -2,7 +2,7 @@
 #include <memory> // std::unique_ptr
 #include <utility> // std::pair, std::make_pair
 #include <iterator>
-
+#include <vector> //for balance
 using std::cout;
 using std::endl;
 // **************************************************************************
@@ -54,6 +54,8 @@ private:
   void clear_helper(Node<kt,vt>* n); // (3) 
   void inorder(Node<kt,vt>* t);
   void preorder(Node<kt,vt>* t);
+  void inorderpush(Node<kt,vt>* t, std::vector<Node<kt,vt>*> &vecnodes );  //recursive constructor of a vector of nodes (key-sorted)
+  Node<kt,vt>* insert_from_vector(std::vector<Node<kt,vt>*> &vecnodes, int start, int end, Node<kt,vt>* parent); //recursive constructor of a balanced tree from stored nodes
 
   
 public:
@@ -71,8 +73,8 @@ public:
 
   void print() {cout << "Print inorder: key (parent)" <<endl; inorder(root); cout << endl ;} // prints in order, sorting usinh key value. It doesn't need iterators. Use inorder() helper function (private). 
   void print_preorder() {cout << "Print preorder: key " <<endl; preorder(root); cout << endl;} //print preorder prints the tree in preorder. It doesn't need iterators. Use preorder () helper function (private). 
-
-
+  void balance ();  
+  unsigned int size() {return _size;}  //used to access the size of the tree at anytime
 };
 // ------------------------ CLASS TREE ENDS ----------------------------
 template<typename kt, typename vt>
@@ -142,7 +144,8 @@ void Tree<kt,vt>::inorder(Node<kt,vt>* t) //function for in-order traversal
     if(t == nullptr)
         return;
     inorder(t->left); ////cout << t->key <<" "; //  decomment for standard print without up node
-    
+
+   // cout << t->key ;
     
     if(t != root) cout << t->key <<" (" << t->up->key << ") ";  //print with the parent node also (comment to simplify output)
     else cout << t->key <<" " << "(root) ";                     // print with parent (comment to simplify output)
@@ -161,6 +164,64 @@ void Tree<kt,vt>::preorder( Node<kt,vt>* t) //function for pre-order traversal
     cout << t->key << " ";
     preorder(t->left);
     preorder(t->right);
+}
+
+// ----------------------------------------------------------------------
+
+template <typename kt, typename vt>
+Node<kt,vt>* Tree<kt,vt>::insert_from_vector(std::vector<Node<kt,vt>*> &vecnodes, int start, int end, Node<kt,vt>* parent)
+{
+    
+    
+    //function which creates a new tree from a sorted vector, by dividing recursively the sorted vector
+    //left branch is made with nodes stored in the first 50% of elements stored
+    //right branch is made with the others
+    
+    //the vector of nodes is passed as input, but recursively only with 1/2 number of elements, defined by the range [start,end]
+    //i need also to pass the pointer to the current node, which will be the parent node at the next recursive iteration
+    
+    if (start > end)
+        return NULL;
+    
+    
+    int middle = (start + end)/2;  //divisione int non ha problemi se numero elementi e' dispari
+    Node<kt,vt>* t = vecnodes[middle];
+    
+    t->up = parent; //parent node is the node passed as current node before the function is called
+    t->left  = insert_from_vector(vecnodes, start, middle-1,t);  //left branch is created using first 1/2 of the node stored
+    t->right = insert_from_vector(vecnodes, middle+1, end, t);   //
+    
+    
+    return t;
+}
+
+
+template <typename kt, typename vt>  //recursive function which traverse in-order and puts nodes in a vector (of nodes)
+void Tree<kt,vt>::inorderpush(Node<kt,vt>* t, std::vector<Node<kt,vt>*> &vecnodes )
+{
+    if(t == nullptr)
+        return;
+    inorderpush(t->left,vecnodes); //duplicate code as inorder function above
+    vecnodes.push_back(t);  //instead of print I store the node
+    inorderpush(t->right,vecnodes);
+}
+
+
+template <typename kt, typename vt>
+void Tree<kt,vt>::balance()
+{
+    
+    cout << endl <<"Balance tree... " << endl;
+    
+    std::vector< Node<kt,vt>* > _vector_of_nodes; //initialize a vector of nodes. I use std::vector for simplicity, so I can use std functions, push_back, reserve
+    _vector_of_nodes.reserve(size());    //reserve the memory, calling size(), member of Tree, not std::vector's size
+    Node<kt,vt>* t = root; //the first node is the root
+    
+    inorderpush(t, _vector_of_nodes ); //build array of nodes
+    
+    root = insert_from_vector(_vector_of_nodes, 0, _vector_of_nodes.size()-1,nullptr); //first call to the recursive function, which return the root,  the input vector is the whole vector, and the partent of the root is NULL 
+    
+    
 }
 
 
@@ -221,8 +282,8 @@ int main()
   tree.insert_noiter(1,1);
   tree.insert_noiter(2,2);
   tree.insert_noiter(3,3);
-  tree.insert_noiter(2,2);
-  tree.insert_noiter(1,1);
+  tree.insert_noiter(4,4);
+  tree.insert_noiter(5,5);
   tree.insert_noiter(6,6);
   tree.insert_noiter(10,10);
   tree.insert_noiter(8,8);
@@ -233,6 +294,12 @@ int main()
     
   tree.print_preorder(); /* PRINT */
   tree.print();/* PRINT */
+
+  tree.balance();
+
+  
+  tree.print_preorder();
+  tree.print();
 
   Tree<int, int>::Iterator first = tree.begin();
   Tree<int, int>::Iterator last = tree.end();
