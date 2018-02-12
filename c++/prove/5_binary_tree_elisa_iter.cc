@@ -26,10 +26,10 @@ using std::endl;
   (9) find, find a given key and return an iterator to that node. If the key 
   is not found returns end(); (simile al print) --> OK
 
- LEGEND
-(n): function n°
-(a): function version WITHOUT iterator
-(b): function version WITH iterator
+  LEGEND
+  (n): function n°
+  (a): function version WITHOUT iterator
+  (b): function version WITH iterator
 */
 template <typename kt, typename vt> class Node;
 template <typename kt, typename vt> class Tree; 
@@ -44,7 +44,7 @@ public:
   Node *up;
   Node *left;
   Node *right;
-  Node(const kt& k, const vt& v, Node* u, Node* l, Node*r):
+  Node(const kt& k, const vt& v, Node* u, Node* l=nullptr, Node*r=nullptr):
     key{k}, value{v},  up{u}, left{l}, right{r} {}
 
   Node<kt,vt>* left_most(){
@@ -53,23 +53,26 @@ public:
     else
       return this;
   }
-// -------------------------------------------------------------------------
-  class Iterator; // ???????????
+  // -------------------------------------------------------------------------
+
+  using Iterator = typename Tree<kt,vt>::Iterator;
   
   Iterator insert(const kt&k, const vt&v){ // (1)(b)
     if(k<key){
       if(left==nullptr){
-	left.reset(new Node<kt,vt>{k,v,this});
+	left = new Node<kt,vt>{k,v,this};
 	return Iterator{left};
       }
       else
 	return left->insert(k,v);
     }
     else if(k>key){
-      if(right==nullptr)
-	right.reset(new Node<kt,vt> {k,v,up});
+      if(right==nullptr){
+	right = new Node<kt,vt> {k,v,up};
+	return Iterator{right};
+      }
       else
-	right->insert(k,v);
+	return right->insert(k,v);
     }
     else
       return Iterator{this};
@@ -92,6 +95,7 @@ private:
   Node<kt,vt>* find_helper(kt key, vt val, Node<kt,vt>* root); //(9)(a)
 
 public:
+
   unsigned int _size;
   unsigned int size() {return _size;} 
 
@@ -102,46 +106,54 @@ public:
   
   void clear() {clear_helper(root);} // (3)(a)
 
-Node<kt,vt>* find_noiter(kt key, vt val){
+  Node<kt,vt>* find_noiter(kt key, vt val){
     return find_helper(key, val, root);} //(9)(a)
   
   void balance();// (8)(a)
   
-// ----------------------------------------------------------------------
-   class Iterator;
+  // ----------------------------------------------------------------------
+  class Iterator;
   
- Iterator print(Iterator begin, Iterator end){ // (2)(b)
- for(; begin !=end; ++begin) {
-	cout << (*begin).first << endl;
-      }
- return Iterator {begin};
+  void print(){ // (2)(b)
+    auto it = cbegin();
+    auto stop = cend();
+    
+    for(; it !=stop; ++it) {
+      cout << (*it).first << " " << (*it).second << endl;
+    }
   }
-  
+ 
   Iterator begin() {return Iterator {root->left_most()};} // (4)(b)
-    /* if(root!=nullptr)...?*/
+  /* if(root!=nullptr)...?*/
   Iterator end() {return Iterator {nullptr};} // (5)(b)
 
   Iterator find(Iterator begin, Iterator end, const kt& key){ //(9)(b)
     for(; begin !=end; ++begin){
       if ((*begin).first == key){
-	cout << "Node found" << endl;
+	cout << "Node " << key << " found." << endl;
 	return Iterator {begin};
       }
     }
     cout << "Node not found" << endl;
     return Iterator {root};
   }
-   /*   Iterator insert(const kt&k, const vt&v){
+  /*  */ 
+  Iterator insert(const kt&k, const vt&v){
     if(root==nullptr){
-      root.reset(new Node<kt,vt>{k,v,nullptr,nullptr,nullptr});
-      // COSA SIGNIFICA RESET??
+      root = new Node<kt,vt>{k,v,nullptr,nullptr,nullptr};
+      
+      /* Reset:
+	 - if empty --> takes ownership of pointer;
+	 - if NOT empty --> deletes managed object, acquires new pointer.
+      */
       return Iterator{root};
     }
     else
       return root->insert(k,v);
-      }*/
-// ----------------------------------------------------------------------
-class ConstIterator; 
+  }
+
+  // ----------------------------------------------------------------------
+  class ConstIterator; 
   ConstIterator cbegin()const {return ConstIterator{root->left_most()};}//(6)(b)
   ConstIterator cend() const {return ConstIterator{nullptr};} // (7)(b) 
 };
@@ -149,15 +161,15 @@ class ConstIterator;
 template<typename kt, typename vt> //(9)(a)
 Node<kt,vt>* Tree<kt,vt>::find_helper(kt key, vt val, Node<kt,vt>* t){
   if (t!=nullptr){
-      if (key == t->key){
-	cout << "The inserted key = " << key << " is in the BT" << endl;
-	return t;
-      }
-      if (key < t->key)
-	return find_helper(key, val, t->left);
-      else
-	return find_helper(key, val, t->right);
+    if (key == t->key){
+      cout << "The inserted key = " << key << " is in the BT" << endl;
+      return t;
     }
+    if (key < t->key)
+      return find_helper(key, val, t->left);
+    else
+      return find_helper(key, val, t->right);
+  }
   else
     cout << "The inserted key = " << key << " is NOT in the BT" << endl;
   return nullptr; 
@@ -166,10 +178,10 @@ Node<kt,vt>* Tree<kt,vt>::find_helper(kt key, vt val, Node<kt,vt>* t){
 template<typename kt, typename vt> // (1)(a)
 Node<kt,vt>* Tree<kt,vt>::insert_helper(kt key, vt val, Node<kt,vt>* t){ 
   if(t == nullptr) {
-      cout << "Inserting node: " << key << endl;
-      t = new Node<kt,vt> (key,val,nullptr,nullptr, nullptr);
-      /* PERCHÈ PARENTESI TONDE?*/
-      _size = _size+1;        
+    cout << "Inserting node: " << key << endl;
+    t = new Node<kt,vt> (key,val,nullptr,nullptr, nullptr);
+    /* PERCHÈ PARENTESI TONDE?*/
+    _size = _size+1;        
   }
   else if(key < t->key){ // left child       
     t->left = insert_helper(key, val, t->left); 
@@ -189,7 +201,7 @@ void Tree<kt,vt>::clear_helper(Node<kt,vt>* n){
   clear_helper(n->left);
   clear_helper(n->right);
 
-  _size = _size-1;        
+  //_size = _size-1; --> Now the list has 4294967295 elements ??????????????????       
 
   delete n;
   n = nullptr;
@@ -224,8 +236,9 @@ private:
   
 public:
   Iterator(Node<kt,vt>* n): current{n}{} 
-  std::pair<kt,vt> operator->() {return (*this);} 
-  std::pair<kt,vt> operator*() const {return{current->key, current->value};}
+  std::pair<kt,vt> & operator->() {return (*this);} 
+  std::pair<kt&,vt&>  operator*() const {return{current->key, current->value};}
+  //  std::pair<kt,vt>  operator*() const {return{current->key, current->value};} (*)
 
   // ++it
   Iterator& operator++() {
@@ -247,9 +260,9 @@ public:
 // ++++++++++++++++++ CONST ITERATOR STARTS ++++++++++++++++++
 template<typename kt, typename vt> 
 class Tree<kt,vt>::ConstIterator:public Tree<kt,vt>::Iterator {
-  using parent = Tree<kt,vt>::Iterator;
+  using parent = Tree<kt,vt>::Iterator; // alias
 public:
-  using parent::Iterator;
+  using parent::Iterator; // using the constructor of the class Iterator
   const std::pair<kt,vt> operator*() const {return parent::operator*();} 
 };
 // ++++++++++++++++++ CONST ITERATOR ENDS ++++++++++++++++++
@@ -273,53 +286,67 @@ int main() {
   Tree<int, int> tree{};
   cout << "-------------------------------------------------------" << endl;
   cout << "1a. INSERTING Nodes (NO Iterator)" << endl;
-  tree.insert_noiter(1,1);
-  tree.insert_noiter(2,2);
   tree.insert_noiter(3,3);
-  tree.insert_noiter(4,4);
+  tree.insert_noiter(2,2);
+  tree.insert_noiter(1,1);
   tree.insert_noiter(5,5);
   tree.insert_noiter(6,6);
-  tree.insert_noiter(10,10);
-  tree.insert_noiter(8,8);
-  tree.insert_noiter(18,18);
-  tree.insert_noiter(27,27);
-  tree.insert_noiter(35,35);
-  tree.insert_noiter(9,9);
+  tree.insert_noiter(4,4);
+  tree.insert_noiter(7,7);
 
   cout << "Now the list has " << tree._size << " elements" << endl;
 
-  /* cout << "----------------------------------------------------" << endl; 
+  cout << "----------------------------------------------------" << endl; 
   cout << "1b. INSERTING Nodes (WITH Iterator)" << endl;
   Tree<int,int>::Iterator insert = tree.insert(26,26);
   cout << (*insert).first << endl;
-  cout << "Now the list has " << tree._size << " elements" << endl;*/
+  cout << "Now the list has " << tree._size << " elements" << endl;
 
   cout << "-------------------------------------------------------" << endl;
   cout << "2b. PRINTING Nodes in order rx to the key (WITH Iterator)" << endl;
   Tree<int,int>::Iterator it = tree.begin();
   Tree<int,int>::Iterator stop = tree.end();
-  tree.print(it,stop);
-  //    Tree<int,int>::Iterator print = tree.print(it,stop);
+  /*(*it).second = 8;
+    If I don't use the reference (*) I'll get: 
+    error: using temporary as lvalue [-fpermissive]
+    (*it).second = 8;*/
+  tree.print();
+  cout << "Now the list has " << tree._size << " elements" << endl;
 
-    cout << "Now the list has " << tree._size << " elements" << endl;
-    cout << "-------------------------------------------------------" << endl;
-    cout << "9a. FINDING  Nodes (NO Iterator)" << endl;
-    tree.find_noiter(1,1); 
-    tree.find_noiter(2,2); 
-    tree.find_noiter(4,4);
-    cout << "-------------------------------------------------------" << endl;
-    cout << "9b. FINDING  Nodes (WITH Iterator)" << endl;
-    it = tree.begin();
-    tree.find(it,stop,100);
-    /* Tree<int,int>::Iterator found = tree.find(it,stop,100);
-       cout << (*found).first << endl;*/
-    cout << "-------------------------------------------------------" << endl;
-    cout << "8. BALANCING the tree" << endl;
-    tree.balance();
-    cout << "-------------------------------------------------------" << endl;
-    cout << "3. DELETING Nodes" << endl;
-    tree.clear();
-    cout << "Now the list has " << tree._size << " elements" << endl;
+  cout << "-------------------------------------------------------" << endl;
+
+  /*cout << "2c. PRINTING Nodes in order rx to the key (WITH ConstIterator)" << endl;
+    Tree<int,int>::ConstIterator cit = tree.cbegin();
+    Tree<int,int>::ConstIterator cstop = tree.cend();
+    tree.print(cit,cstop);
+    cout << "Now the list has " << tree._size << " elements" << endl;*/
+    
+  cout << "-------------------------------------------------------" << endl;
+  cout << "9a. FINDING  Nodes (NO Iterator)" << endl;
+  tree.find_noiter(1,1); 
+  tree.find_noiter(2,2); 
+  tree.find_noiter(4,4);
+  cout << "Now the list has " << tree._size << " elements" << endl;
+
+  cout << "-------------------------------------------------------" << endl;
+  cout << "9b. FINDING  Nodes (WITH Iterator)" << endl;
+  it = tree.begin();
+  tree.find(it,stop,100);
+  tree.find(it,stop,3);
+  cout << "Now the list has " << tree._size << " elements" << endl;
+
+  /* Tree<int,int>::Iterator found = tree.find(it,stop,100);
+     cout << (*found).first << endl;*/
+  cout << "-------------------------------------------------------" << endl;
+  cout << "8. BALANCING the tree" << endl;
+   tree.balance();
+   cout << "Now the list has " << tree._size << " elements" << endl;
+
+  cout << "-------------------------------------------------------" << endl;
+
+  cout << "3. DELETING Nodes" << endl;
+  tree.clear();
+  cout << "Now the list has " << tree._size << " elements" << endl;
 
   return 0;
 }
@@ -346,8 +373,8 @@ int main() {
   cout << (*begin).first << endl;
   // s->size() == (*s).size() BUT in this case
   //cout << it->first << endl;
- // does NOT work :(
-}
+  // does NOT work :(
+  }
 
 
   REFERENCES
