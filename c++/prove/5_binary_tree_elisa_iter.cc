@@ -92,21 +92,20 @@ private:
   Node<kt,vt>* find_helper(kt key, vt val, Node<kt,vt>* root); //(9)(a)
 
 public:
-  void print_preorder( Node<kt,vt>* t);
-  // ----------------------------------------------------------------------
-  int getHeight(Node<kt,vt>* root) {
-    return root == nullptr ? 0 : 1 +
-      max(getHeight(root->left), getHeight(root->right));
-  }
-  // ----------------------------------------------------------------------
-  bool isBalanced(Node<kt,vt>* root){
-    if (root == nullptr) {
-      return true;
-    }
-    int left = getHeight(root->left);
-    int right = getHeight(root->right);
-    return abs(left - right) <= 1 && isBalanced(root->left) && isBalanced(root->right);
-  }
+
+  int diff;
+  
+  int sumOfLeaves(Node<kt,vt>* root){
+    /* int diff = 0; --> perchè sempre 0?? 
+		    riazzera il valore ogni volta che chiamo la funzione, mi sa...*/
+    if(!root)
+      return diff;
+    if(root->left == nullptr && root->right == nullptr)
+      diff +=1;
+    return diff;
+
+    return sumOfLeaves(root->left) - sumOfLeaves(root->right);
+  } 
   // ----------------------------------------------------------------------
   unsigned int _size;
   unsigned int size() {return _size;} 
@@ -161,24 +160,12 @@ public:
       _size = _size+1;
     return root->insert(k,v);
   }
-
   // ----------------------------------------------------------------------
   class ConstIterator; 
   ConstIterator cbegin()const {return ConstIterator{root->left_most()};}//(6)(b)
   ConstIterator cend() const {return ConstIterator{nullptr};} // (7)(b) 
 };
 // ------------------------ CLASS TREE ENDS ----------------------------
-
-template<typename kt, typename vt> //(9)(a)
-void Tree<kt,vt>::print_preorder( Node<kt,vt>* t){
-  if(t==nullptr)
-    return;
-  cout << t->key << endl;
-
-  print_preorder(t->left);
-  print_preorder(t->right);
-
-}
 
 template<typename kt, typename vt> //(9)(a)
 Node<kt,vt>* Tree<kt,vt>::find_helper(kt key, vt val, Node<kt,vt>* t){
@@ -240,8 +227,7 @@ void Tree<kt,vt>::inorderpush(Node<kt,vt>* t,
 }
 // ----------------------------------------------------------------------
 template <typename kt, typename vt> //(8)(a)
-void Tree<kt,vt>::balance() { 
-  cout << endl << "Balance tree..." << endl;
+void Tree<kt,vt>::balance() {   
   std::vector<Node<kt,vt>*> _vector_of_nodes;
   _vector_of_nodes.reserve(size());
   Node<kt,vt>* t = root;
@@ -355,24 +341,12 @@ int main() {
   cout << "Now the list has " << tree._size << " elements." << endl;
 
   cout << "-------------------------------------------------------" << endl;
-  cout << "8. BALANCING the tree" << endl;
-
-  tree.print_preorder(root);
- 
-  //tree.sumOfLeaves(root);
-  // printf("Sum: %d",sumOfLeaves(tree)); //this should print the sum of leaves
-
+  cout << "8. BALANCING the tree" << endl; 
+  int diff_leaves = tree.sumOfLeaves(root);
   
-  // Node<int,int>* root = left_most(); --> ‘left_most’ was not declared in this scope
-  //  cout << (*root).first << endl; --> class Node has no member named "first"
-  
-  /*  if(isBalanced(root))
-      printf("Before the balance, the tree is balanced :o ");
-      else
-      printf("Before the balance, the Tree is not balanced :|");  */
-  
+  cout << "BEFORE the balance, the difference between the left-right n° of leaves is " << diff_leaves << "." << endl;
   tree.balance();
-  tree.print_preorder(root);
+  cout << "AFTER the balance, the difference between the left-right n° of leaves is " << diff_leaves << "." << endl;
 
   cout << "Now the list has " << tree._size << " elements." << endl;
 
@@ -397,8 +371,8 @@ int main() {
   -come organizzare std::pair
 
   C++ NOTES
-  -std::unique_ptr Node<kt,vt>* root;
-  -Reset:
+  * std::unique_ptr Node<kt,vt>* root;
+  * Reset:
   - if empty --> takes ownership of pointer;
   - if NOT empty --> deletes managed object, acquires new pointer.
      
@@ -406,7 +380,7 @@ int main() {
   http://www.cplusplus.com/forum/general/147955/
   https://www.cs.helsinki.fi/u/tpkarkka/alglib/k06/lectures/iterators.html#sequential-search
 
-
+  http://www.cplusplus.com/forum/beginner/74980/
   https://www.geeksforgeeks.org/how-to-determine-if-a-binary-tree-is-balanced/
   https://helloacm.com/how-to-check-balanced-binary-tree-in-cc/
   https://www.geeksforgeeks.org/a-program-to-check-if-a-binary-tree-is-bst-or-not/
