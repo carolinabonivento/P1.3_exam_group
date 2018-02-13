@@ -60,27 +60,27 @@ public:
   Iterator insert(const kt&k, const vt&v){ // (1)(b)
     if(k<key){
       if(left==nullptr){
-	left = new Node<kt,vt>{k,v,this};
-	//	_size = _size+1;
-	  return Iterator{left};
+  	left = new Node<kt,vt>{k,v,this};
+  	//	_size = _size+1;
+  	  return Iterator{left};
       }
       else
-	//	_size = _size+1;
-	return left->insert(k,v);
+  	//	_size = _size+1;
+  	return left->insert(k,v);
     }
     else if(k>key){
       if(right==nullptr){
-	right = new Node<kt,vt> {k,v,up};
-	//	_size = _size+1;
-	return Iterator{right};
+  	right = new Node<kt,vt> {k,v,up};
+  	//	_size = _size+1;
+  	return Iterator{right};
       }
       else
-	//	_size = _size+1;
-	return right->insert(k,v);
+  	//	_size = _size+1;
+  	return right->insert(k,v);
     }
     else
-      /* We choose to ignore a k = key so we don't write
-	 _size = _size+1;*/
+      // We choose to ignore a k = key so we don't write
+      //	 _size = _size+1;
       return Iterator{this};
   }
 };
@@ -168,6 +168,7 @@ public:
   Iterator insert(const kt&k, const vt&v){
     if(root==nullptr){
       root = new Node<kt,vt>{k,v,nullptr,nullptr,nullptr};
+      _size = _size+1;
       
       /* Reset:
 	 - if empty --> takes ownership of pointer;
@@ -176,6 +177,7 @@ public:
       return Iterator{root};
     }
     else
+      _size = _size+1;
       return root->insert(k,v);
   }
 
@@ -185,6 +187,7 @@ public:
   ConstIterator cend() const {return ConstIterator{nullptr};} // (7)(b) 
 };
 // ------------------------ CLASS TREE ENDS ----------------------------
+
 template<typename kt, typename vt> //(9)(a)
 void Tree<kt,vt>::print_preorder( Node<kt,vt>* t){
   if(t==nullptr)
@@ -195,16 +198,6 @@ void Tree<kt,vt>::print_preorder( Node<kt,vt>* t){
   print_preorder(t->right);
 
 }
-
-
-
-
-
-
-
-
-
-
 
 template<typename kt, typename vt> //(9)(a)
 Node<kt,vt>* Tree<kt,vt>::find_helper(kt key, vt val, Node<kt,vt>* t){
