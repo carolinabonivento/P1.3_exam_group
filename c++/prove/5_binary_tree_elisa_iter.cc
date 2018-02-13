@@ -55,32 +55,25 @@ public:
   }
   // -------------------------------------------------------------------------
   
-  using Iterator = typename Tree<kt,vt>::Iterator;
-  
+  using Iterator = typename Tree<kt,vt>::Iterator; 
   Iterator insert(const kt&k, const vt&v){ // (1)(b)
     if(k<key){
       if(left==nullptr){
   	left = new Node<kt,vt>{k,v,this};
-  	//	_size = _size+1;
-  	  return Iterator{left};
+	return Iterator{left};
       }
       else
-  	//	_size = _size+1;
   	return left->insert(k,v);
     }
     else if(k>key){
       if(right==nullptr){
   	right = new Node<kt,vt> {k,v,up};
-  	//	_size = _size+1;
   	return Iterator{right};
       }
       else
-  	//	_size = _size+1;
   	return right->insert(k,v);
     }
     else
-      // We choose to ignore a k = key so we don't write
-      //	 _size = _size+1;
       return Iterator{this};
   }
 };
@@ -101,7 +94,6 @@ private:
   Node<kt,vt>* find_helper(kt key, vt val, Node<kt,vt>* root); //(9)(a)
 
 public:
-  //Node<kt,vt>* root;
   void print_preorder( Node<kt,vt>* t);
 
   // ----------------------------------------------------------------------
@@ -122,7 +114,7 @@ public:
   // ----------------------------------------------------------------------
 
   unsigned int _size;
-    unsigned int size() {return _size;} 
+  unsigned int size() {return _size;} 
 
   Tree(){_size=0; root=nullptr;}
   
@@ -178,7 +170,7 @@ public:
     }
     else
       _size = _size+1;
-      return root->insert(k,v);
+    return root->insert(k,v);
   }
 
   // ----------------------------------------------------------------------
@@ -242,7 +234,7 @@ void Tree<kt,vt>::clear_helper(Node<kt,vt>* n){
   clear_helper(n->left);
   clear_helper(n->right);
 
-  //_size = _size-1; --> Now the list has 4294967295 elements ??????????????????       
+  _size = _size-1;     
 
   delete n;
   n = nullptr;
