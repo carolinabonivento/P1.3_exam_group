@@ -101,7 +101,6 @@ private:
   Node<kt,vt>* find_helper(kt key, vt val, Node<kt,vt>* root); //(9)(a)
 
 public:
-  //Node<kt,vt>* root;
   void print_preorder( Node<kt,vt>* t);
 
   // ----------------------------------------------------------------------
@@ -168,11 +167,6 @@ public:
   Iterator insert(const kt&k, const vt&v){
     if(root==nullptr){
       root = new Node<kt,vt>{k,v,nullptr,nullptr,nullptr};
-      
-      /* Reset:
-	 - if empty --> takes ownership of pointer;
-	 - if NOT empty --> deletes managed object, acquires new pointer.
-      */
       return Iterator{root};
     }
     else
@@ -193,18 +187,7 @@ void Tree<kt,vt>::print_preorder( Node<kt,vt>* t){
 
   print_preorder(t->left);
   print_preorder(t->right);
-
 }
-
-
-
-
-
-
-
-
-
-
 
 template<typename kt, typename vt> //(9)(a)
 Node<kt,vt>* Tree<kt,vt>::find_helper(kt key, vt val, Node<kt,vt>* t){
@@ -228,7 +211,6 @@ Node<kt,vt>* Tree<kt,vt>::insert_helper(kt key, vt val, Node<kt,vt>* t){
   if(t == nullptr) {
     cout << "Inserting node: " << key << endl;
     t = new Node<kt,vt> (key,val,nullptr,nullptr, nullptr);
-    /* PERCHÈ PARENTESI TONDE?*/
     _size = _size+1;        
   }
   else if(key < t->key){ // left child       
@@ -286,8 +268,7 @@ public:
   Iterator(Node<kt,vt>* n): current{n}{} 
   std::pair<kt,vt> & operator->() {return (*this);} 
   std::pair<kt&,vt&>  operator*() const {return{current->key, current->value};}
-  //  std::pair<kt,vt>  operator*() const {return{current->key, current->value};} (*)
-
+  
   // ++it
   Iterator& operator++() {
     if(current){ // "if the current doesn't point to null.."
@@ -358,104 +339,32 @@ int main() {
   cout << "2b. PRINTING Nodes in order rx to the key (WITH Iterator)" << endl;
   Tree<int,int>::Iterator it = tree.begin();
   Tree<int,int>::Iterator stop = tree.end();
-  /*(*it).second = 8;
-    If I don't use the reference (*) I'll get: 
-    error: using temporary as lvalue [-fpermissive]
-    (*it).second = 8;*/
   tree.print();
   cout << "Now the list has " << tree._size << " elements" << endl;
-
-  cout << "-------------------------------------------------------" << endl;
-
-  /*cout << "2c. PRINTING Nodes in order rx to the key (WITH ConstIterator)" << endl;
-    Tree<int,int>::ConstIterator cit = tree.cbegin();
-    Tree<int,int>::ConstIterator cstop = tree.cend();
-    tree.print(cit,cstop);
-    cout << "Now the list has " << tree._size << " elements" << endl;*/
-    
   cout << "-------------------------------------------------------" << endl;
   cout << "9a. FINDING  Nodes (NO Iterator)" << endl;
   tree.find_noiter(1,1); 
   tree.find_noiter(2,2); 
   tree.find_noiter(4,4);
   cout << "Now the list has " << tree._size << " elements" << endl;
-
   cout << "-------------------------------------------------------" << endl;
   cout << "9b. FINDING  Nodes (WITH Iterator)" << endl;
   it = tree.begin();
   tree.find(it,stop,100);
   tree.find(it,stop,3);
   cout << "Now the list has " << tree._size << " elements" << endl;
-
-  /* Tree<int,int>::Iterator found = tree.find(it,stop,100);
-     cout << (*found).first << endl;*/
   cout << "-------------------------------------------------------" << endl;
   cout << "8. BALANCING the tree" << endl;
 
   tree.print_preorder(root);
-  // Node<int,int>* root {}; --> how to print the first inserted node??? ALBERTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-  //  root.left_most(); --> request for member ‘left_most’ in ‘root’, which is of pointer type ‘Node<int, int>*’ (maybe you meant to use ‘->’ ?)
-  // root->left_most(); --> Segmentation fault
-
-  //tree.sumOfLeaves(root);
-  // printf("Sum: %d",sumOfLeaves(tree)); //this should print the sum of leaves
-
-  
-  // Node<int,int>* root = left_most(); --> ‘left_most’ was not declared in this scope
-  //  cout << (*root).first << endl; --> class Node has no member named "first"
-  
-  /*  if(isBalanced(root))
-      printf("Before the balance, the tree is balanced :o ");
-      else
-      printf("Before the balance, the Tree is not balanced :|");  */
-  
   tree.balance();
   tree.print_preorder(root);
 
   cout << "Now the list has " << tree._size << " elements" << endl;
-
   cout << "-------------------------------------------------------" << endl;
-
   cout << "3. DELETING Nodes" << endl;
   tree.clear();
   cout << "Now the list has " << tree._size << " elements" << endl;
 
   return 0;
 }
-
-/*
-  TO DO
-  - BALANCE da adattare (l'idea di stampare prima e dopo il parent è nice!!)
-  -sistemare il codice (ordine!)
-  -error handling
-  -copy and move semantics
-  -testare tutto
-  -cambiare key e value (usare anche stringhe)
-  -analizzare performance (scambiando anche key e value)
-  -usare smart pointers
-  -come organizzare std::pair
-
-  QUESTIONS
-  - chiedere dei valori di ritorno
-  - DEVO DEFINIRE UNA CLASSE ITERATOR ANCHE PER IL NODO?
-  - COSA SIGNIFICA RESET??
-  - PERCHÈ NON FUNZIONA??
-  Iterator print(Iterator begin, Iterator end){
-  for(; begin !=end; ++begin) {
-  cout << (*begin).first << endl;
-  // s->size() == (*s).size() BUT in this case
-  //cout << it->first << endl;
-  // does NOT work :(
-  }
-
-
-  REFERENCES
-  http://www.cplusplus.com/forum/general/147955/
-  https://www.cs.helsinki.fi/u/tpkarkka/alglib/k06/lectures/iterators.html#sequential-search
-
-
-  https://www.geeksforgeeks.org/how-to-determine-if-a-binary-tree-is-balanced/
-  https://helloacm.com/how-to-check-balanced-binary-tree-in-cc/
-  https://www.geeksforgeeks.org/a-program-to-check-if-a-binary-tree-is-bst-or-not/
-
-*/
