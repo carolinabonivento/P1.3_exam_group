@@ -12,7 +12,7 @@ using std::endl;
 // FUNCTION DECLARATION AND DEFINITION
 // **************************************************************************
 /*
-  (1) insert, used to insert a new pair key-value --> PROBLEMI con la (b)
+  (1) insert, used to insert a new pair key-value --> OK
   (2) print, used to print key: value of each node. Note that the output   
   should be in order with respect to the keys --> OK
   (3) clear(), clear the content of the tree  --> OK                          
@@ -53,8 +53,7 @@ public:
     else
       return this;
   }
-  // -------------------------------------------------------------------------
-  
+  // ------------------------------------------------------------------------- 
   using Iterator = typename Tree<kt,vt>::Iterator; 
   Iterator insert(const kt&k, const vt&v){ // (1)(b)
     if(k<key){
@@ -82,7 +81,6 @@ public:
 template<typename kt, typename vt>
 class Tree{
 private:
-  // std::unique_ptr Node<kt,vt>* root;
   Node<kt,vt>* root;
   
   Node<kt,vt>* insert_helper(kt key, vt val, Node<kt,vt>* t); // (1)(a)
@@ -95,14 +93,12 @@ private:
 
 public:
   void print_preorder( Node<kt,vt>* t);
-
   // ----------------------------------------------------------------------
   int getHeight(Node<kt,vt>* root) {
     return root == nullptr ? 0 : 1 +
       max(getHeight(root->left), getHeight(root->right));
   }
   // ----------------------------------------------------------------------
-
   bool isBalanced(Node<kt,vt>* root){
     if (root == nullptr) {
       return true;
@@ -112,7 +108,6 @@ public:
     return abs(left - right) <= 1 && isBalanced(root->left) && isBalanced(root->right);
   }
   // ----------------------------------------------------------------------
-
   unsigned int _size;
   unsigned int size() {return _size;} 
 
@@ -129,7 +124,6 @@ public:
     return find_helper(key, val, root);} //(9)(a)
   
   void balance();// (8)(a)
-  
   // ----------------------------------------------------------------------
   class Iterator;
   
@@ -153,19 +147,14 @@ public:
 	return Iterator {begin};
       }
     }
-    cout << "Node not found" << endl;
+    cout << "Node not found." << endl;
     return Iterator {root};
   }
-  /*  */ 
-  Iterator insert(const kt&k, const vt&v){
+
+  Iterator insert(const kt&k, const vt&v){ // (1)(b)
     if(root==nullptr){
       root = new Node<kt,vt>{k,v,nullptr,nullptr,nullptr};
       _size = _size+1;
-      
-      /* Reset:
-	 - if empty --> takes ownership of pointer;
-	 - if NOT empty --> deletes managed object, acquires new pointer.
-      */
       return Iterator{root};
     }
     else
@@ -195,7 +184,7 @@ template<typename kt, typename vt> //(9)(a)
 Node<kt,vt>* Tree<kt,vt>::find_helper(kt key, vt val, Node<kt,vt>* t){
   if (t!=nullptr){
     if (key == t->key){
-      cout << "The inserted key = " << key << " is in the BT" << endl;
+      cout << "The inserted key = " << key << " IS in the BT." << endl;
       return t;
     }
     if (key < t->key)
@@ -204,7 +193,7 @@ Node<kt,vt>* Tree<kt,vt>::find_helper(kt key, vt val, Node<kt,vt>* t){
       return find_helper(key, val, t->right);
   }
   else
-    cout << "The inserted key = " << key << " is NOT in the BT" << endl;
+    cout << "The inserted key = " << key << " is NOT in the BT." << endl;
   return nullptr; 
 }
 // ----------------------------------------------------------------------
@@ -260,7 +249,6 @@ void Tree<kt,vt>::balance() {
   root = insert_from_vector(_vector_of_nodes, 0, _vector_of_nodes.size()-1,
 			    nullptr);
 }
-
 // ************************ ITERATOR STARTS ************************
 template<typename kt, typename vt>
 class Tree<kt,vt>::Iterator {
@@ -327,61 +315,50 @@ int main() {
   tree.insert_noiter(6,6);
   tree.insert_noiter(4,4);
   tree.insert_noiter(7,7);
-
-  cout << "The root is " << root->key << " " << root->value << endl;
-  cout << "Now the list has " << tree._size << " elements" << endl;
-
-  cout << "----------------------------------------------------" << endl; 
+  
+  cout << "The root is " << root->key << " " << root->value << "." << endl;
+  cout << "Now the list has " << tree._size << " elements." << endl;
+  
+  cout << "----------------------------------------------------" << endl;
   cout << "1b. INSERTING Nodes (WITH Iterator)" << endl;
   Tree<int,int>::Iterator insert_1 = tree.insert(26,26);
   Tree<int,int>::Iterator insert_2 = tree.insert(30,30);
+  
   cout << (*insert_1).first << endl;
   cout << (*insert_2).first << endl;
-  cout << "Now the list has " << tree._size << " elements" << endl;
-
+  cout << "Now the list has " << tree._size << " elements." << endl;
+  
   cout << "-------------------------------------------------------" << endl;
   cout << "2b. PRINTING Nodes in order rx to the key (WITH Iterator)" << endl;
   Tree<int,int>::Iterator it = tree.begin();
   Tree<int,int>::Iterator stop = tree.end();
+  
   /*(*it).second = 8;
     If I don't use the reference (*) I'll get: 
     error: using temporary as lvalue [-fpermissive]
     (*it).second = 8;*/
   tree.print();
-  cout << "Now the list has " << tree._size << " elements" << endl;
-
-  cout << "-------------------------------------------------------" << endl;
-
-  /*cout << "2c. PRINTING Nodes in order rx to the key (WITH ConstIterator)" << endl;
-    Tree<int,int>::ConstIterator cit = tree.cbegin();
-    Tree<int,int>::ConstIterator cstop = tree.cend();
-    tree.print(cit,cstop);
-    cout << "Now the list has " << tree._size << " elements" << endl;*/
-    
+  cout << "Now the list has " << tree._size << " elements." << endl;
+  
   cout << "-------------------------------------------------------" << endl;
   cout << "9a. FINDING  Nodes (NO Iterator)" << endl;
   tree.find_noiter(1,1); 
   tree.find_noiter(2,2); 
   tree.find_noiter(4,4);
-  cout << "Now the list has " << tree._size << " elements" << endl;
+  cout << "Now the list has " << tree._size << " elements." << endl;
 
   cout << "-------------------------------------------------------" << endl;
   cout << "9b. FINDING  Nodes (WITH Iterator)" << endl;
   it = tree.begin();
   tree.find(it,stop,100);
   tree.find(it,stop,3);
-  cout << "Now the list has " << tree._size << " elements" << endl;
+  cout << "Now the list has " << tree._size << " elements." << endl;
 
-  /* Tree<int,int>::Iterator found = tree.find(it,stop,100);
-     cout << (*found).first << endl;*/
   cout << "-------------------------------------------------------" << endl;
   cout << "8. BALANCING the tree" << endl;
 
   tree.print_preorder(root);
-  // Node<int,int>* root {}; --> how to print the first inserted node??? ALBERTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-  //  root.left_most(); --> request for member ‘left_most’ in ‘root’, which is of pointer type ‘Node<int, int>*’ (maybe you meant to use ‘->’ ?)
-  // root->left_most(); --> Segmentation fault
-
+ 
   //tree.sumOfLeaves(root);
   // printf("Sum: %d",sumOfLeaves(tree)); //this should print the sum of leaves
 
@@ -397,21 +374,20 @@ int main() {
   tree.balance();
   tree.print_preorder(root);
 
-  cout << "Now the list has " << tree._size << " elements" << endl;
+  cout << "Now the list has " << tree._size << " elements." << endl;
 
   cout << "-------------------------------------------------------" << endl;
-
   cout << "3. DELETING Nodes" << endl;
   tree.clear();
-  cout << "Now the list has " << tree._size << " elements" << endl;
+  cout << "Now the list has " << tree._size << " elements." << endl;
+  
+  cout << "-------------------------------------------------------" << endl;
 
   return 0;
 }
 
 /*
   TO DO
-  - BALANCE da adattare (l'idea di stampare prima e dopo il parent è nice!!)
-  -sistemare il codice (ordine!)
   -error handling
   -copy and move semantics
   -testare tutto
@@ -420,20 +396,12 @@ int main() {
   -usare smart pointers
   -come organizzare std::pair
 
-  QUESTIONS
-  - chiedere dei valori di ritorno
-  - DEVO DEFINIRE UNA CLASSE ITERATOR ANCHE PER IL NODO?
-  - COSA SIGNIFICA RESET??
-  - PERCHÈ NON FUNZIONA??
-  Iterator print(Iterator begin, Iterator end){
-  for(; begin !=end; ++begin) {
-  cout << (*begin).first << endl;
-  // s->size() == (*s).size() BUT in this case
-  //cout << it->first << endl;
-  // does NOT work :(
-  }
-
-
+  C++ NOTES
+  -std::unique_ptr Node<kt,vt>* root;
+  -Reset:
+  - if empty --> takes ownership of pointer;
+  - if NOT empty --> deletes managed object, acquires new pointer.
+     
   REFERENCES
   http://www.cplusplus.com/forum/general/147955/
   https://www.cs.helsinki.fi/u/tpkarkka/alglib/k06/lectures/iterators.html#sequential-search
