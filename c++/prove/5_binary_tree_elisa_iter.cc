@@ -140,6 +140,7 @@ public:
 
   Iterator find(Iterator begin, Iterator end, const kt& key){ //(9)(b)
     for(; begin !=end; ++begin){
+      //     cout << "Hello!" << endl;
       if ((*begin).first == key){
 	cout << "Node " << key << " found." << endl;
 	return Iterator {begin};
@@ -285,7 +286,7 @@ public:
     bool operator!=(const Iterator& other) {return !(*this == other);}
 
     bool is_leaf() const{
-      if(current->left==nullptr && current->right)
+      if(current->left==nullptr && current->right==nullptr)
 	return true;
       else return false;
     }
@@ -308,11 +309,22 @@ public:
       return nullptr;
     int middle = (start+end)/2;
     Node<kt,vt>* t = vecnodes[middle];
-    t->up = parent;
+    //  if(left child: up =parent)
+    // else (right child: up = up del mio parent)
+    /* if(key< t->key)
+      t->up = parent;
+    else if(key > t->key)
+    t->up = parent->up;*/
+
+    
+    t->up = parent; // MODIFY IT
+    //  t->up = parent->up; => segmfault
+    
     t->left = insert_from_vector(vecnodes, start, middle-1, t);
     t->right = insert_from_vector(vecnodes, middle+1, end, t);
     return t;
   }
+
   // ************************************************************************
   // MAIN
   // ************************************************************************
@@ -363,8 +375,8 @@ public:
     cout << "-------------------------------------------------------" << endl;
     cout << "9b. FINDING  Nodes (WITH Iterator)" << endl;
     it = tree.begin();
-    tree.find(it,stop,100);
-    tree.find(it,stop,3);
+    // tree.find(it,stop,100);
+    //tree.find(it,stop,3);
 
     clock_t pre_begin = clock();
     tree.find(it,stop,7);
@@ -391,14 +403,14 @@ public:
     else
       cout << "AFTER the balance, the tree is NOT balanced." << endl;
 
-     // Tree<int,int>::Iterator post_it = tree.begin();
-     // Tree<int,int>::Iterator post_stop = tree.end();
+     /*Tree<int,int>::Iterator post_it = tree.begin();
+     Tree<int,int>::Iterator post_stop = tree.end();
 
-     // clock_t post_begin = clock();
-     // tree.find(post_it,post_stop,7);
-     // clock_t post_end = clock();
-     // double post_time = double(post_end-post_begin)/CLOCKS_PER_SEC;
-     // cout << "AFTER the balance, the time for find node 7 is " << post_time << "." << endl; 
+     clock_t post_begin = clock();
+     tree.find(post_it,post_stop,7); // --> PROBLEM because the up changed!!!!!!!!!!!!!
+     clock_t post_end = clock();
+     double post_time = double(post_end-post_begin)/CLOCKS_PER_SEC;
+     cout << "AFTER the balance, the time for find node 7 is " << post_time << "." << endl; */
      
      cout << "Now the list has " << tree._size << " elements." << endl;
 
