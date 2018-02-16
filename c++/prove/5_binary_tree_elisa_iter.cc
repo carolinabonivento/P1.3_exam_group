@@ -4,7 +4,8 @@
 #include <iterator>
 #include <vector> // std::vector
 #include <cstdbool>
-#include <cmath>
+#include <cmath> // to use pow(a,b) (= a^b)
+#include <ctime>
 
 using std::cout;
 using std::endl;
@@ -104,20 +105,6 @@ private:
   Node<kt,vt>* find_helper(kt key, vt val, Node<kt,vt>* root); //(9)(a)
 
 public:
-
-  int sum;
-  
-  int sum_of_leaves(Node<kt,vt>* root){
-    /* int diff = 0; --> perchè sempre 0?? 
-       riazzera il valore ogni volta che chiamo la funzione, mi sa...*/
-    if(!root)
-      return sum;
-    if(root->left == nullptr && root->right == nullptr)
-      sum +=1;
-    return sum;
-
-    return sum_of_leaves(root->left) - sum_of_leaves(root->right);
-  } 
   // ----------------------------------------------------------------------
   unsigned int _size;
   unsigned int size() {return _size;} 
@@ -180,7 +167,6 @@ public:
       return root->count_levels();
   }
   // ----------------------------------------------------------------------
-  
   bool is_balanced() const{
     unsigned int n_levels = count_levels();
     unsigned int leaves = 0;
@@ -379,6 +365,13 @@ public:
     it = tree.begin();
     tree.find(it,stop,100);
     tree.find(it,stop,3);
+
+    clock_t pre_begin = clock();
+    tree.find(it,stop,7);
+    clock_t pre_end = clock();
+    double pre_time = double(pre_end-pre_begin)/CLOCKS_PER_SEC;
+
+    cout << "BEFORE the balance, the time for find node 7 is " << pre_time << " s." << endl; 
     cout << "Now the list has " << tree._size << " elements." << endl;
 
     cout << "-------------------------------------------------------" << endl;
@@ -398,13 +391,16 @@ public:
     else
       cout << "AFTER the balance, the tree is NOT balanced." << endl;
 
-    //    tree.is_balanced();
+     // Tree<int,int>::Iterator post_it = tree.begin();
+     // Tree<int,int>::Iterator post_stop = tree.end();
 
-    /* int diff_leaves = tree.sum_of_leaves(root);
-    cout << "BEFORE the balance, the difference between the left-right n° of leaves is " << diff_leaves << "." << endl;
-    cout << "AFTER the balance, the difference between the left-right n° of leaves is " << diff_leaves << "." << endl;*/
-
-    cout << "Now the list has " << tree._size << " elements." << endl;
+     // clock_t post_begin = clock();
+     // tree.find(post_it,post_stop,7);
+     // clock_t post_end = clock();
+     // double post_time = double(post_end-post_begin)/CLOCKS_PER_SEC;
+     // cout << "AFTER the balance, the time for find node 7 is " << post_time << "." << endl; 
+     
+     cout << "Now the list has " << tree._size << " elements." << endl;
 
     cout << "-------------------------------------------------------" << endl;
     cout << "3. DELETING Nodes" << endl;
