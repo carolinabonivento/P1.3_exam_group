@@ -331,18 +331,8 @@ public:
       return nullptr;
     int middle = (start+end)/2;
     Node<kt,vt>* t = vecnodes[middle];
-    //  if(left child: up =parent)
-    // else (right child: up = up del mio parent)
     
-    /* if(key< t->key)
-      t->up = parent;
-    else if(key > t->key)
-    t->up = parent->up;*/
-
-    
-      t->up = parent; // MODIFY IT
-   
-    //  t->up = parent->up; => segmfault
+    t->up = parent; 
     
     t->left = insert_from_vector(vecnodes, start, middle-1, t);
     t->right = insert_from_vector(vecnodes, middle+1, end, t->up);
