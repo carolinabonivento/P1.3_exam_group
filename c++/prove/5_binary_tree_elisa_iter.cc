@@ -182,6 +182,26 @@ public:
     }
     return false;
   }
+  // ----------------------------------------------------------------------
+  void create_random_tree(int N_nodes){
+    create_random_tree(N_nodes, root);
+  }
+  // ----------------------------------------------------------------------
+  void create_random_tree(int N_nodes, Node<kt,vt>* node){
+    
+    for(int i=0; i<N_nodes; i++){
+      srand(time(NULL));
+      int x = rand()%100 + 1;
+      if(node==nullptr){
+	node = new Node<kt,vt>{x,x,nullptr,nullptr,nullptr};
+      }
+      
+      if(x < node->key)
+	create_random_tree(x, node->left);
+      else if (x > node->key)
+	create_random_tree(x, node->right);
+    }
+  }
     // ----------------------------------------------------------------------
     class ConstIterator; 
     ConstIterator cbegin()const {return ConstIterator{root->left_most()};}//(6)(b)
@@ -333,16 +353,16 @@ public:
     cout << "-------------------------------------------------------" << endl;
     cout << "1a. INSERTING Nodes (NO Iterator)" << endl;
     Node<int,int> *root;
-    root = tree.insert_noiter(3,3);
+    root = tree.insert_noiter(6,3);
     tree.insert_noiter(2,2);
     tree.insert_noiter(1,1);
-    tree.insert_noiter(5,5);
-    tree.insert_noiter(6,6);
+    tree.insert_noiter(7,5);
+    tree.insert_noiter(5,6);
     tree.insert_noiter(4,4);
-    tree.insert_noiter(7,7);
+    tree.insert_noiter(3,7);
   
     cout << "The root is " << root->key << " " << root->value << "." << endl;
-    cout << "Now the list has " << tree._size << " elements." << endl;
+    cout << "Now the tree has " << tree._size << " nodes." << endl;
   
     cout << "----------------------------------------------------" << endl;
     cout << "1b. INSERTING Nodes (WITH Iterator)" << endl;
@@ -351,40 +371,36 @@ public:
   
     cout << (*insert_1).first << endl;
     cout << (*insert_2).first << endl;
-    cout << "Now the list has " << tree._size << " elements." << endl;
-  
+    cout << "Now the tree has " << tree._size << " nodes." << endl;
+
+    cout << "Now the tree has " << tree.count_levels() << " levels." << endl;
+    
     cout << "-------------------------------------------------------" << endl;
     cout << "2b. PRINTING Nodes in order rx to the key (WITH Iterator)" << endl;
     Tree<int,int>::Iterator it = tree.begin();
     Tree<int,int>::Iterator stop = tree.end();
-  
-    /*(*it).second = 8;
-      If I don't use the reference (*) I'll get: 
-      error: using temporary as lvalue [-fpermissive]
-      (*it).second = 8;*/
+
     tree.print();
-    cout << "Now the list has " << tree._size << " elements." << endl;
+    cout << "Now the tree has " << tree._size << " nodes." << endl;
   
     cout << "-------------------------------------------------------" << endl;
     cout << "9a. FINDING  Nodes (NO Iterator)" << endl;
     tree.find_noiter(1,1); 
     tree.find_noiter(2,2); 
     tree.find_noiter(4,4);
-    cout << "Now the list has " << tree._size << " elements." << endl;
+    cout << "Now the tree has " << tree._size << " nodes." << endl;
 
     cout << "-------------------------------------------------------" << endl;
     cout << "9b. FINDING  Nodes (WITH Iterator)" << endl;
     it = tree.begin();
-    // tree.find(it,stop,100);
-    //tree.find(it,stop,3);
-
+    
     clock_t pre_begin = clock();
     tree.find(it,stop,7);
     clock_t pre_end = clock();
     double pre_time = double(pre_end-pre_begin)/CLOCKS_PER_SEC;
 
     cout << "BEFORE the balance, the time for find node 7 is " << pre_time << " s." << endl; 
-    cout << "Now the list has " << tree._size << " elements." << endl;
+    cout << "Now the tree has " << tree._size << " nodes." << endl;
 
     cout << "-------------------------------------------------------" << endl;
     cout << "8. BALANCING the tree" << endl;
@@ -403,11 +419,15 @@ public:
     else
       cout << "AFTER the balance, the tree is NOT balanced." << endl;
 
+     // tree.find(it,stop,7); // --> PROBLEM because the up changed!!!!!!!!!!!!!
+     
      /*Tree<int,int>::Iterator post_it = tree.begin();
      Tree<int,int>::Iterator post_stop = tree.end();
 
      clock_t post_begin = clock();
+     
      tree.find(post_it,post_stop,7); // --> PROBLEM because the up changed!!!!!!!!!!!!!
+     
      clock_t post_end = clock();
      double post_time = double(post_end-post_begin)/CLOCKS_PER_SEC;
      cout << "AFTER the balance, the time for find node 7 is " << post_time << "." << endl; */
@@ -417,10 +437,24 @@ public:
     cout << "-------------------------------------------------------" << endl;
     cout << "3. DELETING Nodes" << endl;
     tree.clear();
-    cout << "Now the list has " << tree._size << " elements." << endl;
+    cout << "Now the tree has " << tree._size << " nodes." << endl;
   
     cout << "-------------------------------------------------------" << endl;
+    cout << "10. TESTING the performances" << endl;
 
+    int nodes = 0;
+    Tree<int, int> * bin_tree = new Tree<int,int>;
+
+    nodes = 1;
+    bin_tree->create_random_tree(nodes);
+    cout << "Now the tree has " << bin_tree->_size << " nodes." << endl;
+    /*PERCHÈ NON POSSO ACCEDERE A SIZE COME FOSSE UNA FUNZIONE DELLA CLASSE, COME POI EFFETTIVAMENTE È?!*/
+    //tree.clear();
+    
+    nodes = 2;
+    bin_tree->create_random_tree(nodes);
+    cout << "Now the tree has " << bin_tree->_size << " nodes." << endl;
+    
     return 0;
   }
 
