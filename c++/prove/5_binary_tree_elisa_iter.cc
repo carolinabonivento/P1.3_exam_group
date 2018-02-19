@@ -183,11 +183,12 @@ public:
     return false;
   }
   // ----------------------------------------------------------------------
-  void create_random_tree(int N_nodes){
+  Node<kt,vt>* create_random_tree(int N_nodes){
     create_random_tree(N_nodes, root);
+    return root;
   }
   // ----------------------------------------------------------------------
-  void create_random_tree(int N_nodes, Node<kt,vt>* node){
+  Node<kt,vt>* create_random_tree(int N_nodes, Node<kt,vt>* node){
     
     for(int i=0; i<N_nodes; i++){
       srand(time(NULL));
@@ -201,6 +202,7 @@ public:
       else if (x > node->key)
 	create_random_tree(x, node->right);
     }
+    return node;
   }
     // ----------------------------------------------------------------------
     class ConstIterator; 
@@ -331,17 +333,19 @@ public:
     Node<kt,vt>* t = vecnodes[middle];
     //  if(left child: up =parent)
     // else (right child: up = up del mio parent)
+    
     /* if(key< t->key)
       t->up = parent;
     else if(key > t->key)
     t->up = parent->up;*/
 
     
-    t->up = parent; // MODIFY IT
+      t->up = parent; // MODIFY IT
+   
     //  t->up = parent->up; => segmfault
     
     t->left = insert_from_vector(vecnodes, start, middle-1, t);
-    t->right = insert_from_vector(vecnodes, middle+1, end, t);
+    t->right = insert_from_vector(vecnodes, middle+1, end, t->up);
     return t;
   }
 
@@ -403,7 +407,8 @@ public:
     cout << "Now the tree has " << tree._size << " nodes." << endl;
 
     cout << "-------------------------------------------------------" << endl;
-    cout << "8. BALANCING the tree" << endl;
+    
+      cout << "8. BALANCING the tree" << endl;
 
     bool pre_balance = tree.is_balanced();
     if(pre_balance == 1) 
@@ -419,20 +424,15 @@ public:
     else
       cout << "AFTER the balance, the tree is NOT balanced." << endl;
 
-     // tree.find(it,stop,7); // --> PROBLEM because the up changed!!!!!!!!!!!!!
-     
-     /*Tree<int,int>::Iterator post_it = tree.begin();
-     Tree<int,int>::Iterator post_stop = tree.end();
-
      clock_t post_begin = clock();
-     
-     tree.find(post_it,post_stop,7); // --> PROBLEM because the up changed!!!!!!!!!!!!!
-     
+     tree.find(it,stop,7);
      clock_t post_end = clock();
      double post_time = double(post_end-post_begin)/CLOCKS_PER_SEC;
-     cout << "AFTER the balance, the time for find node 7 is " << post_time << "." << endl; */
+
+     cout << "AFTER the balance, the time for find node 7 is " << post_time << "." << endl;
      
      cout << "Now the list has " << tree._size << " elements." << endl;
+     tree.print();
 
     cout << "-------------------------------------------------------" << endl;
     cout << "3. DELETING Nodes" << endl;
@@ -440,21 +440,33 @@ public:
     cout << "Now the tree has " << tree._size << " nodes." << endl;
   
     cout << "-------------------------------------------------------" << endl;
+
+    /*
     cout << "10. TESTING the performances" << endl;
 
     int nodes = 0;
-    Tree<int, int> * bin_tree = new Tree<int,int>;
+    Tree<int, int> bin_tree{};
+     
+	Tree<int, int> * bin_tree = new Tree<int,int>;
+	nodes = 1;
+	bin_tree->create_random_tree(nodes);
+	cout << "The tree has (key,value) = " << endl;
+	bin_tree->print();  
+	cout << "Now the tree has " << bin_tree->_size << " nodes." << endl << endl;
+	bin_tree->clear(); // SE NON LO METTO, MI GENERA UN TREE CON 1 SOLO NODO :(
+    */
+    //  srand(time(NULL));
+    /*
+       nodes = 1;
+       root = bin_tree.create_random_tree(nodes);
+       cout << "The tree has (key,value) = " << endl;
+       bin_tree.print();
+    
+       cout << "Now the tree has " << bin_tree._size << " nodes." << endl;
+       //bin_tree.clear();
 
-    nodes = 1;
-    bin_tree->create_random_tree(nodes);
-    cout << "Now the tree has " << bin_tree->_size << " nodes." << endl;
-    /*PERCHÈ NON POSSO ACCEDERE A SIZE COME FOSSE UNA FUNZIONE DELLA CLASSE, COME POI EFFETTIVAMENTE È?!*/
-    //tree.clear();
-    
-    nodes = 2;
-    bin_tree->create_random_tree(nodes);
-    cout << "Now the tree has " << bin_tree->_size << " nodes." << endl;
-    
+       */
+
     return 0;
   }
 
