@@ -17,10 +17,10 @@ binary_tree.x: binary_tree.o
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
 # Run the executable
-run: binary_tree.x
+check: binary_tree.x
 
 # Valgrind to check eventual memory leaks
-check: binary_tree.x
+valgrind: binary_tree.x
 	valgrind ./binary_tree.x
 
 # Legend
