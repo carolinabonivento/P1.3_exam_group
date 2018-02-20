@@ -20,16 +20,6 @@ script:
   - export CC=/usr/bin/gcc-6
   - export CXX=/usr/bin/g++-6
   # Check versions of gcc, g++ and cmake
-  - gcc -v && g++ -v
+  - gcc -v && g++ -v && cmake --version
   # Run your build commands next
-#---------------------------------------------------------------------------
-# PREVIOUS VERSION
-# language: cpp
-# before_install:
-#   - sudo apt-get -qq update
-#   - sudo apt-get install -y mpi-default-bin mpi-default-dev
-# compiler:
-#   - g++ -std=c++11
-# script:
-#   - make check
-
+  - make check
