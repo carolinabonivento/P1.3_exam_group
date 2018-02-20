@@ -26,3 +26,10 @@ remote repo
 
 # QUESTIONS FOR ALBERTO
 1. Va bene se ignoriamo un nodo uguale ad un altro? Vedere implementazione
+
+# ALBERTO DIXIT
+1. insert deve restituire un iteratore (e non un puntatore al nodo)
+
+2. If I'm the
+* RIGHT child: my up = my parent's up  (```t->right->up = t->up```)
+* LEFT child: my up = my parent (```t->left->up = t```)
