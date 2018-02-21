@@ -16,13 +16,20 @@ remote repo
 
 3. Solve Travis problem (I'll check on Axel's repo)
 
-4. Measure performance (Caro)
+4. Measure performance
 
 5. Interfaccia figa (but only if ALL the functions work)
 
-6. Implement copy and move semantics for the tree (???)
+6. Implement copy and move semantics for the tree (Caro)
 
-7. Readme ordinato (Eli)
+7. Readme ordinato
 
 # QUESTIONS FOR ALBERTO
 1. Va bene se ignoriamo un nodo uguale ad un altro? Vedere implementazione
+
+# ALBERTO DIXIT
+1. insert deve restituire un iteratore (e non un puntatore al nodo)
+
+2. If I'm the
+* RIGHT child: my up = my parent's up  (```t->right->up = t->up```)
+* LEFT child: my up = my parent (```t->left->up = t```)
