@@ -16,13 +16,13 @@ remote repo
 
 3. Solve Travis problem (I'll check on Axel's repo)
 
-4. Measure performance (Caro)
+4. Measure performance
 
 5. Interfaccia figa (but only if ALL the functions work)
 
-6. Implement copy and move semantics for the tree (???)
+6. Implement copy and move semantics for the tree (Caro)
 
-7. Readme ordinato (Eli)
+7. Readme ordinato
 
 # QUESTIONS FOR ALBERTO
 1. Va bene se ignoriamo un nodo uguale ad un altro? Vedere implementazione
