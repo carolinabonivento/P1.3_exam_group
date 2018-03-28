@@ -117,6 +117,36 @@ class PostcardList(object):
         return chosen_sender
 
       
+
+    def  getPostcardsByReceiver(self, receiver): #(9) same as sender changing from with to
+        chosen_receiver = []
+        if receiver in self._to:
+            #print(receiver)
+            for to_receiver in sorted(self._to[receiver]):
+                #print(to_receiver)
+                chosen_receiver.append(self._postcards[to_receiver])
+                #print(chosen_receiver)
+        return chosen_receiver
+
+    def getNumberOfPostcards(self): #(6)
+        return len(self._postcards) #len returns the length of a list
+        
+
+    def getPostcardsByDateRange(self,date_range): #(7)
+        in_range = []
+        for day in self._date:
+            #print(day)
+            date = datetime.datetime.strptime(day, "%Y-%m-%d")
+            #print(date)
+            #print(date_range[0])
+            if date > date_range[0] and date < date_range[1]:
+                for i in self._date[day]:
+                    in_range.append(self._postcards[i])
+                    #print(self._postcards[i])
+                    #print(in_range)         
+            #else:
+                #print("non in range")
+        return in_range
 # ************************* Class for Unit tests *************************
 class Test(unittest.TestCase):
 
@@ -132,26 +162,26 @@ class Test(unittest.TestCase):
                                 'writeFile','readFile',\
                                 'parsePostcards',\
                                 'updateFile','updateLists',\
-                                'getPostcardsBySender']
-    #                           'getNumberOfPostcards'] 
-    #                           'getPostcardsByDateRange',\ 
-    #                           'getPostcardsByReceiver']
+                                'getPostcardsBySender',\
+                                'getNumberOfPostcards',\
+                                'getPostcardsByDateRange',\
+                                'getPostcardsByReceiver']
         
         for attr in attributes_to_define:
             if attr not in dir(self._PstLst[0]): 
                 raise Exception(attr+' is missing')
 
-    # def test_check_getPostcardByDateRange(self): 
-    #     dr_test = []
-    #     for i in [0,1,4,6]: 
-    #         dr_test.append(\
-    #                        self._PstLst[i].getPostcardsByDateRange(date_range=\
-    #                                                                (datetime.datetime.strptime('2008-1-1', "%Y-%m-%d"),\
-    #                                                                 datetime.datetime.strptime('2010-12-31', "%Y-%m-%d"))))
-    #         self.assertListEqual(sorted(dr_test[0]),sorted(['date:2010-06-23; from:Sneezy; to:Alice;\n', 'date:2009-12-12; from:Dopey; to:Peter;\n', 'date:2008-03-23; from:Sneezy; to:Pluto;\n', 'date:2008-06-03; from:Goofy; to:Pluto;\n'])) 
-    #         self.assertEqual(len(dr_test[1]),1)
-    #         self.assertListEqual(sorted(dr_test[2]),sorted(['date:2010-03-30; from:Louie; to:Sneezy;\n', 'date:2010-03-05; from:Goofy; to:Dopey;\n', 'date:2009-11-08; from:Daisy; to:Minnie;\n', 'date:2010-07-13; from:Bashful; to:Louie;\n', 'date:2008-06-29; from:Huey; to:Dopey;\n', 'date:2009-01-04; from:Alice; to:Hook;\n', 'date:2009-04-28; from:Bashful; to:Mickey;\n']))
-    #         self.assertEqual(len(dr_test[3]),7)
+    def test_check_getPostcardByDateRange(self):
+        dr_test = []
+        for i in [0,1,4,6]:
+            dr_test.append(\
+                self._PstLst[i].getPostcardsByDateRange(date_range=\
+                   (datetime.datetime.strptime('2008-1-1', "%Y-%m-%d"),\
+                    datetime.datetime.strptime('2010-12-31', "%Y-%m-%d"))))
+        self.assertListEqual(sorted(dr_test[0]),sorted(['date:2010-06-23; from:Sneezy; to:Alice;\n', 'date:2009-12-12; from:Dopey; to:Peter;\n', 'date:2008-03-23; from:Sneezy; to:Pluto;\n', 'date:2008-06-03; from:Goofy; to:Pluto;\n']))
+        self.assertEqual(len(dr_test[1]),1)
+        self.assertListEqual(sorted(dr_test[2]),sorted(['date:2010-03-30; from:Louie; to:Sneezy;\n', 'date:2010-03-05; from:Goofy; to:Dopey;\n', 'date:2009-11-08; from:Daisy; to:Minnie;\n', 'date:2010-07-13; from:Bashful; to:Louie;\n', 'date:2008-06-29; from:Huey; to:Dopey;\n', 'date:2009-01-04; from:Alice; to:Hook;\n', 'date:2009-04-28; from:Bashful; to:Mickey;\n']))
+        self.assertEqual(len(dr_test[3]),7)
 
     def test_check_getPostcardBySender(self):
         s_test = []
@@ -165,16 +195,16 @@ class Test(unittest.TestCase):
         self.assertEqual(len(s_test[5]),0)
         self.assertGreater(len(s_test[8]),len(s_test[9]))
         
-    # def test_check_getPostcardByReceiver(self): 
-    #     r_test = []
-    #     for i in [0,3,8,9]:
-    #         for receiver in ['Peter','Hook','Alice','SnowWhite']:
-    #             r_test.append(\
-    #                           self._PstLst[i].getPostcardsByReceiver(receiver=receiver))
-    #             self.assertIn('date:2009-12-12; from:Dopey; to:Peter;\n',r_test[0])
-    #             self.assertListEqual(r_test[1],['date:2016-10-23; from:Sneezy; to:Hook;\n'])
-    #             self.assertEqual(len(r_test[2]),2)
-    #             self.assertEqual(len(r_test[6]),3)
+    def test_check_getPostcardByReceiver(self):
+        r_test = []
+        for i in [0,3,8,9]:
+            for receiver in ['Peter','Hook','Alice','SnowWhite']:
+                r_test.append(\
+                  self._PstLst[i].getPostcardsByReceiver(receiver=receiver))
+        self.assertIn('date:2009-12-12; from:Dopey; to:Peter;\n',r_test[0])
+        self.assertListEqual(r_test[1],['date:2016-10-23; from:Sneezy; to:Hook;\n'])
+        self.assertEqual(len(r_test[2]),2)
+        self.assertEqual(len(r_test[6]),3)
 
     def test_check_sent_received_when(self): 
         srw_test = []
