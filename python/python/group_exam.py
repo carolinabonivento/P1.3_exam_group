@@ -64,7 +64,9 @@ class PostcardList(object):
     # parse self._postcards, set self.{_date,_from,_to}
         for i, postcard in enumerate(self._postcards):
             parts = postcard.split(';')
-            pp_date = parts[0].split(':')[1].strip()#; print(pp_date)
+            print(parts)
+            pp_date = parts[0].split(':')[1].strip()#;
+            print(pp_date)
             # strip: delete blanks before and after
             # print(pp_date[5:]) => the first 5 elements in a row + all rows
             # print(pp_date[:5]) => all the elements but at max 5 columns
@@ -113,6 +115,7 @@ class PostcardList(object):
             if from_sender == sender:
                 chosen_sender += [self._postcards[l] for l in lines]
         return chosen_sender
+
       
 # ************************* Class for Unit tests *************************
 class Test(unittest.TestCase):

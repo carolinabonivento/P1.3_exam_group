@@ -22,7 +22,7 @@ public:
     node* up = nullptr;
     node();
     node (const kt& k = kt(), const vt& v = vt(), node* l = nullptr, node* r = nullptr): key(k),val(v),left(l), right(r) {}
-    
+// *** NEW NODE FOR COPY ***
     node (node* orig, node* p):key(orig->key), val(orig->val), up(p) {
         if (orig->left)
             left=new node (orig->left, this);
@@ -74,15 +74,17 @@ public:
     
     Tree() {root=nullptr;}
     
-    // copy constructor
+    // *** COPY SEMANTIC ***
     
     Tree (const Tree& other){
-        std::cout << "dovrei copiare ma non mi va\n";
-        //if(other.root !=nullptr)
-        //    root= new node<kt,vt>{other.root, nullptr};
+        //std::cout << "dovrei copiare ma non mi va\n";
+        if(other.root !=nullptr)
+            root= new node<kt,vt>{other.root, nullptr};
     }
-    //--------------------------------------------------
-
+    //-------------------------------------------------
+    
+    // *** MOVE SEMANTIC ***
+    
     Tree(Tree&& other){
         root = other.root;
         other.root = nullptr;
@@ -131,16 +133,6 @@ void Tree<kt,vt>::preorder( node<kt,vt>* t) //function for pre-order traversal
     if(t->right)
         preorder(t->right);
 }
-
-
-/*template <typename kt, typename vt>
-node<kt,vt>* Tree<kt,vt>::copy(node<kt,vt>* orig, node<kt,vt>* p)
-{
-    if (orig->left !=nullptr)
-        left= new node<kt,vt>(orig->left, orig);
-    if (orig->right !=nullptr)
-        right= new node<kt,vt>(orig->right, orig->up);
-}*/
 
 
 int main(){

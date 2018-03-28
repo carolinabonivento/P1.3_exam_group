@@ -15,17 +15,17 @@ using std::endl;
 // **************************************************************************
 /*
   (1) insert, used to insert a new pair key-value --> OK
-  (2) print, used to print key: value of each node. Note that the output   
+  (2) print, used to print key: value of each Node. Note that the output
   should be in order with respect to the keys --> OK
   (3) clear(), clear the content of the tree  --> OK                          
-  (4) begin(), return an iterator to the first node (which likely will not 
-  be the root node) --> OK
+  (4) begin(), return an iterator to the first Node (which likely will not
+  be the root Node) --> OK
   (5) end(), return a proper iterator --> OK                                    
-  (6) cbegin(), return a const_iterator to the first node --> OK        
+  (6) cbegin(), return a const_iterator to the first Node --> OK
   (7) cend(), return a proper const_iterator --> OK                    
   (8) balance(), balance the tree. (da zero, sorting con funzione della    
   std::lib) --> TO DO
-  (9) find, find a given key and return an iterator to that node. If the key 
+  (9) find, find a given key and return an iterator to that Node. If the key
   is not found returns end(); (simile al print) --> OK
 
   LEGEND
@@ -37,7 +37,7 @@ template <typename kt, typename vt> class Node;
 template <typename kt, typename vt> class Tree; 
 template <typename kt, typename vt> class Iterator;
 
-// ************************ CLASS NODE STARTS *******************************
+// ************************ CLASS Node STARTS *******************************
 template <typename kt, typename vt>
 class Node {
 public:
@@ -87,9 +87,18 @@ public:
 
     return std::max(l_levels, r_levels);
   }
+    
+// *********************** COPY NODE CONSTRUCTOR **************************
+    
+    Node (Node* orig, Node* p):key(orig->key), value(orig->value), up(p) {
+        if (orig->left)
+            left=new Node (orig->left, this);
+        if (orig->right)
+            right=new Node (orig->right, up);
+    }
   
 };
-// ************************ CLASS NODE ENDS  ****************************
+// ************************ CLASS Node ENDS  ****************************
 // ------------------------ CLASS TREE STARTS ----------------------------
 template<typename kt, typename vt>
 class Tree{
@@ -98,11 +107,13 @@ private:
   
   Node<kt,vt>* insert_helper(kt key, vt val, Node<kt,vt>* t); // (1)(a)
   void clear_helper(Node<kt,vt>* n); // (3)(a)
-  void inorderpush(Node<kt,vt>* t, std::vector<Node<kt,vt>*> &vecnodes);//(8)(a)
-  Node<kt,vt>* insert_from_vector(std::vector<Node<kt,vt>*> &vecnodes,
+  void inorderpush(Node<kt,vt>* t, std::vector<Node<kt,vt>*> &vecNodes);//(8)(a)
+  Node<kt,vt>* insert_from_vector(std::vector<Node<kt,vt>*> &vecNodes,
 				  int start, int end,
 				  Node<kt,vt>* parent); // (8)(a)
   Node<kt,vt>* find_helper(kt key, vt val, Node<kt,vt>* root); //(9)(a)
+ // **************** Node OF THE COPIED TREE ****************************
+  Node<kt,vt>* copy(Node<kt,vt>* orig, Node<kt,vt>* p);
 
 public:
   // ----------------------------------------------------------------------
@@ -122,6 +133,21 @@ public:
     return find_helper(key, val, root);} //(9)(a)
   
   void balance();// (8)(a)
+    
+   // *********************** COPY SEMANTIC *************************
+    
+    Tree (const Tree& other){
+        //std::cout << "dovrei copiare ma non mi va\n";
+        if(other.root !=nullptr)
+            root= new Node<kt,vt>{other.root, nullptr};
+    }
+    
+    // ************************ MOVE SEMANTIC ***********************
+    
+    Tree(Tree&& other){
+        root = other.root;
+        other.root = nullptr;
+    }
   // ----------------------------------------------------------------------
   class Iterator;
   
@@ -138,7 +164,7 @@ public:
   /* if(root!=nullptr)...?*/
   Iterator end() {return Iterator {nullptr};} // (5)(b)
 
-  Iterator find(Iterator begin, Iterator end, const kt& key){ //(9)(b)
+    Iterator find(Iterator begin, Iterator end, const kt& key){ //(9)(b)
     for(; begin !=end; ++begin){
       //     cout << "Hello!" << endl;
       if ((*begin).first == key){
@@ -152,7 +178,7 @@ public:
 
   Iterator insert(const kt&k, const vt&v){ // (1)(b)
     if(root==nullptr){
-      root = new Node<kt,vt>{k,v,nullptr,nullptr,nullptr};
+        root = new Node<kt,vt>{k,v,nullptr,nullptr,nullptr};
       _size = _size+1;
       return Iterator{root};
     }
@@ -183,14 +209,14 @@ public:
     return false;
   }
   // ----------------------------------------------------------------------
-  Node<kt,vt>* create_random_tree(int N_nodes){
-    create_random_tree(N_nodes, root);
+  Node<kt,vt>* create_random_tree(int N_Nodes){
+    create_random_tree(N_Nodes, root);
     return root;
   }
   // ----------------------------------------------------------------------
-  Node<kt,vt>* create_random_tree(int N_nodes, Node<kt,vt>* node){
+  Node<kt,vt>* create_random_tree(int N_Nodes, Node<kt,vt>* Node){
     
-    for(int i=0; i<N_nodes; i++){
+    for(int i=0; i<N_Nodes; i++){
       //  srand(time(NULL));
       int x = 10;
 
@@ -198,16 +224,16 @@ public:
 	srand(time(NULL));
 	int x = rand()%100 + 1;
       */ 
-      if(node==nullptr){
-	node = new Node<kt,vt>{x,x,nullptr,nullptr,nullptr};
+      if(Node==nullptr){
+          Node = new Node<kt,vt>{x,x,nullptr,nullptr,nullptr};
       }
       
-      if(x < node->key)
-	create_random_tree(x, node->left);
-      else if (x > node->key)
-	create_random_tree(x, node->right);
+      if(x < Node->key)
+	create_random_tree(x, Node->left);
+      else if (x > Node->key)
+	create_random_tree(x, Node->right);
     }
-    return node;
+    return Node;
   }
   // ----------------------------------------------------------------------
   class ConstIterator; 
@@ -234,9 +260,9 @@ Node<kt,vt>* Tree<kt,vt>::find_helper(kt key, vt val, Node<kt,vt>* t){
 }
 // ----------------------------------------------------------------------
 template<typename kt, typename vt> // (1)(a)
-Node<kt,vt>* Tree<kt,vt>::insert_helper(kt key, vt val, Node<kt,vt>* t){ 
+Node<kt,vt>* Tree<kt,vt>::insert_helper(kt key, vt val, Node<kt,vt>* t){
   if(t == nullptr) {
-    cout << "Inserting node: " << key << endl;
+    cout << "Inserting Node: " << key << endl;
     t = new Node<kt,vt> (key,val,nullptr,nullptr, nullptr);
     /* PERCHÈ PARENTESI TONDE?*/
     _size = _size+1;        
@@ -253,7 +279,7 @@ Node<kt,vt>* Tree<kt,vt>::insert_helper(kt key, vt val, Node<kt,vt>* t){
 }
 // ----------------------------------------------------------------------
 template <typename kt, typename vt> //(3)(a)
-void Tree<kt,vt>::clear_helper(Node<kt,vt>* n){ 
+void Tree<kt,vt>::clear_helper(Node<kt,vt>* n){
   if( n == nullptr) return;
     
   clear_helper(n->left);
@@ -267,21 +293,21 @@ void Tree<kt,vt>::clear_helper(Node<kt,vt>* n){
 // ----------------------------------------------------------------------
 template <typename kt, typename vt> //(8)(a)
 void Tree<kt,vt>::inorderpush(Node<kt,vt>* t,
-			      std::vector<Node<kt,vt>*> &vecnodes){
+			      std::vector<Node<kt,vt>*> &vecNodes){
   if (t==nullptr)
     return;
-  inorderpush(t->left, vecnodes);
-  vecnodes.push_back(t);
-  inorderpush(t->right, vecnodes);
+  inorderpush(t->left, vecNodes);
+  vecNodes.push_back(t);
+  inorderpush(t->right, vecNodes);
 }
 // ----------------------------------------------------------------------
 template <typename kt, typename vt> //(8)(a)
 void Tree<kt,vt>::balance() {   
-  std::vector<Node<kt,vt>*> _vector_of_nodes;
-  _vector_of_nodes.reserve(size());
+  std::vector<Node<kt,vt>*> _vector_of_Nodes;
+  _vector_of_Nodes.reserve(size());
   Node<kt,vt>* t = root;
-  inorderpush(t, _vector_of_nodes);
-  root = insert_from_vector(_vector_of_nodes, 0, _vector_of_nodes.size()-1,
+  inorderpush(t, _vector_of_Nodes);
+  root = insert_from_vector(_vector_of_Nodes, 0, _vector_of_Nodes.size()-1,
 			    nullptr);
 }
 // ************************ ITERATOR STARTS ************************
@@ -291,7 +317,7 @@ private:
   Node<kt,vt> *current;
   
 public:
-  Iterator(Node<kt,vt>* n): current{n}{} 
+  Iterator(Node<kt,vt>* n): current{n}{}
   std::pair<kt,vt> & operator->() {return (*this);} 
   std::pair<kt&,vt&>  operator*() const {return{current->key, current->value};}
   //  std::pair<kt,vt>  operator*() const {return{current->key, current->value};} (*)
@@ -299,7 +325,7 @@ public:
   // ++it
   Iterator& operator++() {
     if(current){ // "if the current doesn't point to null.."
-      if(current->Node<kt,vt>::right) /* "if the right of the current 
+      if(current->Node<kt,vt>::right) /* "if the right of the current
 					 doesn't point to null.."*/
 	current = current->right->left_most();
       else
@@ -329,18 +355,18 @@ public:
 };
 // ++++++++++++++++++ CONST ITERATOR ENDS ++++++++++++++++++
 template<typename kt, typename vt> 
-Node<kt,vt>* Tree<kt,vt>::insert_from_vector(std::vector<Node<kt,vt>*>&vecnodes,
+Node<kt,vt>* Tree<kt,vt>::insert_from_vector(std::vector<Node<kt,vt>*>&vecNodes,
 					     int start, int end,
 					     Node<kt,vt>* parent){
   if(start>end)
     return nullptr;
   int middle = (start+end)/2;
-  Node<kt,vt>* t = vecnodes[middle];
+  Node<kt,vt>* t = vecNodes[middle];
     
   t->up = parent; 
     
-  t->left = insert_from_vector(vecnodes, start, middle-1, t);
-  t->right = insert_from_vector(vecnodes, middle+1, end, t->up);
+  t->left = insert_from_vector(vecNodes, start, middle-1, t);
+  t->right = insert_from_vector(vecNodes, middle+1, end, t->up);
   return t;
 }
 
@@ -361,7 +387,7 @@ int main() {
   tree.insert_noiter(3,7);
   
   cout << "The root is " << root->key << " " << root->value << "." << endl;
-  cout << "Now the tree has " << tree._size << " nodes." << endl;
+  cout << "Now the tree has " << tree._size << " Nodes." << endl;
   
   cout << "----------------------------------------------------" << endl;
   cout << "1b. INSERTING Nodes (WITH Iterator)" << endl;
@@ -370,7 +396,7 @@ int main() {
   
   cout << (*insert_1).first << endl;
   cout << (*insert_2).first << endl;
-  cout << "Now the tree has " << tree._size << " nodes." << endl;
+  cout << "Now the tree has " << tree._size << " Nodes." << endl;
 
   cout << "Now the tree has " << tree.count_levels() << " levels." << endl;
     
@@ -380,14 +406,14 @@ int main() {
   Tree<int,int>::Iterator stop = tree.end();
 
   tree.print();
-  cout << "Now the tree has " << tree._size << " nodes." << endl;
+  cout << "Now the tree has " << tree._size << " Nodes." << endl;
   
   cout << "-------------------------------------------------------" << endl;
   cout << "9a. FINDING  Nodes (NO Iterator)" << endl;
   tree.find_noiter(1,1); 
   tree.find_noiter(2,2); 
   tree.find_noiter(4,4);
-  cout << "Now the tree has " << tree._size << " nodes." << endl;
+  cout << "Now the tree has " << tree._size << " Nodes." << endl;
 
   cout << "-------------------------------------------------------" << endl;
   cout << "9b. FINDING  Nodes (WITH Iterator)" << endl;
@@ -398,8 +424,8 @@ int main() {
   clock_t pre_end = clock();
   double pre_time = double(pre_end-pre_begin)/CLOCKS_PER_SEC;
 
-  cout << "BEFORE the balance, the time for find node 7 is " << pre_time << " s." << endl; 
-  cout << "Now the tree has " << tree._size << " nodes." << endl;
+  cout << "BEFORE the balance, the time for find Node 7 is " << pre_time << " s." << endl;
+  cout << "Now the tree has " << tree._size << " Nodes." << endl;
 
   cout << "-------------------------------------------------------" << endl;
     
@@ -424,7 +450,7 @@ int main() {
   clock_t post_end = clock();
   double post_time = double(post_end-post_begin)/CLOCKS_PER_SEC;
 
-  cout << "AFTER the balance, the time for find node 7 is " << post_time << "." << endl;
+  cout << "AFTER the balance, the time for find Node 7 is " << post_time << "." << endl;
      
   cout << "Now the list has " << tree._size << " elements." << endl;
   tree.print();
@@ -432,33 +458,46 @@ int main() {
   cout << "-------------------------------------------------------" << endl;
   cout << "3. DELETING Nodes" << endl;
   tree.clear();
-  cout << "Now the tree has " << tree._size << " nodes." << endl;
+  cout << "Now the tree has " << tree._size << " Nodes." << endl;
   
-  cout << "-------------------------------------------------------" << endl;   
+  cout << "-------------------------------------------------------" << endl;
+  
+  cout << "COPY" << endl;
+    
+  Tree<int, int> copy{tree};
+  copy.print();
+    
+  cout << "-------------------------------------------------------" << endl;
+ 
+  cout << "MOVE" << endl;
+    
+  Tree<int,int> move{std::move(tree)};
+    move.print();
+    
   /*
   cout << "10. TESTING the performances" << endl;
 
-  int nodes = 0;
+  int Nodes = 0;
   Tree<int, int> bin_tree{};
   Node<int,int> *root_test;
   //root_test = bin_tree.insert_noiter(100,100);
 
   // PARTE COMMENTATA
 	Tree<int, int> * bin_tree = new Tree<int,int>;
-	nodes = 1;
-	bin_tree->create_random_tree(nodes);
+	Nodes = 1;
+	bin_tree->create_random_tree(Nodes);
 	cout << "The tree has (key,value) = " << endl;
 	bin_tree->print();  
-	cout << "Now the tree has " << bin_tree->_size << " nodes." << endl << endl;
+	cout << "Now the tree has " << bin_tree->_size << " Nodes." << endl << endl;
 	bin_tree->clear(); // SE NON LO METTO, MI GENERA UN TREE CON 1 SOLO NODO :(
   //   
-  nodes = 1;
-  root_test = bin_tree.create_random_tree(nodes);
+  Nodes = 1;
+  root_test = bin_tree.create_random_tree(Nodes);
   cout << "The new tree's root is " << root_test->key << "." << endl;  // --> SEGMFAULT
     
   //bin_tree.print(); // --> SEGMFAULT
 
-  cout << "Now the tree has " << bin_tree._size << " nodes." << endl;
+  cout << "Now the tree has " << bin_tree._size << " Nodes." << endl;
   bin_tree.clear();
        
   cout << "-------------------------------------------------------" << endl;
