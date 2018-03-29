@@ -50,9 +50,7 @@ class PostcardList(object):
     # write self.{_date,_from,_to} to self._file
 # http://www.pythonforbeginners.com/files/reading-and-writing-files-in-python
         with open(self._file,'w') as f:
-            print(self._postcards)
             for postcard in self._postcards:
-                print(postcard)
                 f.write(str(postcard))
                 # str: string to be written in the file
                 
@@ -109,22 +107,16 @@ class PostcardList(object):
     def  getPostcardsBySender(self, sender): #(8)
         postcards_sender = []
         if sender in self._from:
-            #print(receiver)
             for from_sender in sorted(self._from[sender]):
-                #print(to_receiver)
                 postcards_sender.extend([self._postcards[from_sender]])
-                #print(chosen_receiver)
         return postcards_sender  
       
 
     def  getPostcardsByReceiver(self, receiver): #(9) same as sender changing from with to
         postcards_receiver = []
         if receiver in self._to:
-            #print(receiver)
             for to_receiver in sorted(self._to[receiver]):
-                #print(to_receiver)
                 postcards_receiver.extend([self._postcards[to_receiver]])
-                #print(chosen_receiver)
         return postcards_receiver
 
 
