@@ -26,10 +26,10 @@ import unittest
 import datetime # module to deal with dates
 
 # ************************* Class for Postcard List *************************
-class PostcardList(object):
-    def __init__ (self, postcards = None):
+class PostcardList(object): 
+    def __init__ (self, postcards = None): # I can give the arguments with keywords
     # class constructor:
-    # - the "self" variable: instance of the object itself
+    # - the "self" variable: instance of the object itself 
     # - when calling PostcardList(), Py creates an object and passes it as
     #   the first parameter to the __init__ method.
     # Initialization:
