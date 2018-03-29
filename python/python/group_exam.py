@@ -50,7 +50,9 @@ class PostcardList(object):
     # write self.{_date,_from,_to} to self._file
 # http://www.pythonforbeginners.com/files/reading-and-writing-files-in-python
         with open(self._file,'w') as f:
+            print(self._postcards)
             for postcard in self._postcards:
+                print(postcard)
                 f.write(str(postcard))
                 # str: string to be written in the file
                 
@@ -220,5 +222,9 @@ class Test(unittest.TestCase):
 
 if __name__ == '__main__':
 
-    unittest.main()
+    #unittest.main()
+
+    #PostcardListObject=PostcardList(postcards = None)
+    #PostcardListObject.readFile('exam_postcard_list0.txt')
+    #print(PostcardListObject._postcards)
 
