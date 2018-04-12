@@ -225,7 +225,7 @@ public:
 	int x = rand()%100 + 1;
       */ 
       if(Node==nullptr){
-          Node = new Node<kt,vt>{x,x,nullptr,nullptr,nullptr};
+          Node = new ::Node<kt,vt>{x,x,nullptr,nullptr,nullptr};
       }
       
       if(x < Node->key)
