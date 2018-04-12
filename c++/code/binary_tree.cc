@@ -43,15 +43,22 @@ class Node {
 public:
   kt key;
   vt value;
-  Node *up;
-  Node *left;
-  Node *right;
+  Node *up=nullptr;
+  Node *left=nullptr;
+  Node *right=nullptr;
   Node(const kt& k, const vt& v, Node* u, Node* l=nullptr, Node*r=nullptr):
     key{k}, value{v},  up{u}, left{l}, right{r} {}
 
+  ~Node(){
+    if(left != nullptr)
+      delete left;
+    if(right)
+      delete right;
+  }
+  
   Node<kt,vt>* left_most(){
-    if(Node<kt,vt>::left)
-      return Node<kt,vt>::left->left_most();
+    if(left)
+      return left->left_most();
     else
       return this;
   }
@@ -112,15 +119,14 @@ private:
 				  int start, int end,
 				  Node<kt,vt>* parent); // (8)(a)
   Node<kt,vt>* find_helper(kt key, vt val, Node<kt,vt>* root); //(9)(a)
- // **************** Node OF THE COPIED TREE ****************************
-  Node<kt,vt>* copy(Node<kt,vt>* orig, Node<kt,vt>* p);
+ 
 
 public:
   // ----------------------------------------------------------------------
   unsigned int _size;
   unsigned int size() {return _size;} 
 
-  Tree(){_size=0; root=nullptr;}
+  Tree(): root{nullptr}, _size{0} {}
   
   Node<kt,vt>* insert_noiter(kt key, vt val){
     root = insert_helper(key, val, root);
@@ -133,21 +139,28 @@ public:
     return find_helper(key, val, root);} //(9)(a)
   
   void balance();// (8)(a)
-    
-   // *********************** COPY SEMANTIC *************************
-    
-    Tree (const Tree& other){
+
+  // **************** Node OF THE COPIED TREE ****************************
+   Node<kt,vt>* copy(Node<kt,vt>* orig, Node<kt,vt>* p);
+  
+   // // *********************** COPY SEMANTIC *************************
+  ~Tree(){
+    if(root)
+      delete root;
+  }
+  
+  Tree (const Tree& other): _size{other._size} {
         //std::cout << "dovrei copiare ma non mi va\n";
-        if(other.root !=nullptr)
-            root= new Node<kt,vt>{other.root, nullptr};
+      if(other.root !=nullptr)
+	root= new Node<kt,vt>{other.root, nullptr};
     }
     
     // ************************ MOVE SEMANTIC ***********************
     
-    Tree(Tree&& other){
-        root = other.root;
-        other.root = nullptr;
-    }
+    // Tree(Tree&& other){
+    //     root = other.root;
+    //     other.root = nullptr;
+    // }
   // ----------------------------------------------------------------------
   class Iterator;
   
@@ -209,32 +222,30 @@ public:
     return false;
   }
   // ----------------------------------------------------------------------
-  Node<kt,vt>* create_random_tree(int N_Nodes){
-    create_random_tree(N_Nodes, root);
-    return root;
-  }
-  // ----------------------------------------------------------------------
-  Node<kt,vt>* create_random_tree(int N_Nodes, Node<kt,vt>* Node){
-    
-    for(int i=0; i<N_Nodes; i++){
-      //  srand(time(NULL));
-      int x = 10;
+  // Node<kt,vt>* create_random_tree(int N_Nodes){
+  //   create_random_tree(N_Nodes, root);
+  //   return root;
+  // }
+  // // ----------------------------------------------------------------------
+  // Node<kt,vt>* create_random_tree(int N_Nodes, Node<kt,vt>* Node){
+  //   for(int i=0; i<N_Nodes; i++){
+  //     //  srand(time(NULL));
+  //     int x = 10;
 
-      /*
-	srand(time(NULL));
-	int x = rand()%100 + 1;
-      */ 
-      if(Node==nullptr){
-          Node = new ::Node<kt,vt>{x,x,nullptr,nullptr,nullptr};
-      }
-      
-      if(x < Node->key)
-	create_random_tree(x, Node->left);
-      else if (x > Node->key)
-	create_random_tree(x, Node->right);
-    }
-    return Node;
-  }
+  //     /*
+  // 	srand(time(NULL));
+  // 	int x = rand()%100 + 1;
+  //     */ 
+  //     if(Node==nullptr){
+  // 	Node = new::Node<kt,vt>{x,x,nullptr,nullptr,nullptr};
+  //     }
+  //     if(x < Node->key)
+  // 	create_random_tree(x, Node->left);
+  //     else if (x > Node->key)
+  // 	create_random_tree(x, Node->right);
+  //   }
+  //   return Node;
+  // }
   // ----------------------------------------------------------------------
   class ConstIterator; 
   ConstIterator cbegin()const {return ConstIterator{root->left_most()};}//(6)(b)
@@ -454,12 +465,6 @@ int main() {
      
   cout << "Now the list has " << tree._size << " elements." << endl;
   tree.print();
-
-  cout << "-------------------------------------------------------" << endl;
-  cout << "3. DELETING Nodes" << endl;
-  tree.clear();
-  cout << "Now the tree has " << tree._size << " Nodes." << endl;
-  
   cout << "-------------------------------------------------------" << endl;
   
   cout << "COPY" << endl;
@@ -469,10 +474,20 @@ int main() {
     
   cout << "-------------------------------------------------------" << endl;
  
-  cout << "MOVE" << endl;
+  // cout << "MOVE" << endl;
     
-  Tree<int,int> move{std::move(tree)};
-    move.print();
+  // Tree<int,int> move{std::move(tree)};
+  //   move.print();
+
+    cout << "-------------------------------------------------------" << endl;
+    cout << "3. DELETING Nodes" << endl;
+    // tree.clear();
+    // copy.clear();
+    //move.clear();
+    cout << "Now the original tree has " << tree._size << " Nodes." << endl;
+    cout << "Now the copied tree has " << copy._size << " Nodes." << endl;
+    //cout << "Now the tree has " << tree._size << " Nodes." << endl;
+  
     
   /*
   cout << "10. TESTING the performances" << endl;
