@@ -43,12 +43,19 @@ class Node {
 public:
   kt key;
   vt value;
-  Node *up;
-  Node *left;
-  Node *right;
+  Node *up=nullptr;
+  Node *left=nullptr;
+  Node *right=nullptr;
   Node(const kt& k, const vt& v, Node* u, Node* l=nullptr, Node*r=nullptr):
     key{k}, value{v},  up{u}, left{l}, right{r} {}
 
+  ~Node(){
+    if(left != nullptr)
+      delete left;
+    if(right)
+      delete right;
+  }
+  
   Node<kt,vt>* left_most(){
     if(left)
       return left->left_most();
@@ -119,7 +126,7 @@ public:
   unsigned int _size;
   unsigned int size() {return _size;} 
 
-  Tree(){_size=0; root=nullptr;}
+  Tree(): root{nullptr}, _size{0} {}
   
   Node<kt,vt>* insert_noiter(kt key, vt val){
     root = insert_helper(key, val, root);
@@ -137,11 +144,15 @@ public:
    Node<kt,vt>* copy(Node<kt,vt>* orig, Node<kt,vt>* p);
   
    // // *********************** COPY SEMANTIC *************************
-    
-    Tree (const Tree& other){
+  ~Tree(){
+    if(root)
+      delete root;
+  }
+  
+  Tree (const Tree& other): _size{other._size} {
         //std::cout << "dovrei copiare ma non mi va\n";
-        if(other.root !=nullptr)
-            root= new Node<kt,vt>{other.root, nullptr};
+      if(other.root !=nullptr)
+	root= new Node<kt,vt>{other.root, nullptr};
     }
     
     // ************************ MOVE SEMANTIC ***********************
@@ -472,8 +483,8 @@ int main() {
 
     cout << "-------------------------------------------------------" << endl;
     cout << "3. DELETING Nodes" << endl;
-    tree.clear();
-    copy.clear();
+    // tree.clear();
+    // copy.clear();
     //move.clear();
     cout << "Now the original tree has " << tree._size << " Nodes." << endl;
     cout << "Now the copied tree has " << copy._size << " Nodes." << endl;
