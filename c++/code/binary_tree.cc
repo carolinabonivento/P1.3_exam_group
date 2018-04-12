@@ -276,7 +276,7 @@ template<typename kt, typename vt> // (1)(a)
 Node<kt,vt>* Tree<kt,vt>::insert_helper(kt key, vt val, Node<kt,vt>* t){
   if(t == nullptr) {
     cout << "Inserting Node: " << key << endl;
-    t = new Node<kt,vt> (key,val,nullptr,nullptr, nullptr);
+    t = new Node<kt,vt> {key,val,nullptr,nullptr, nullptr};
     /* PERCHÈ PARENTESI TONDE?*/
     _size = _size+1;        
   }
