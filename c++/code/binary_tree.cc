@@ -50,8 +50,8 @@ public:
     key{k}, value{v},  up{u}, left{l}, right{r} {}
 
   Node<kt,vt>* left_most(){
-    if(Node<kt,vt>::left)
-      return Node<kt,vt>::left->left_most();
+    if(left)
+      return left->left_most();
     else
       return this;
   }
