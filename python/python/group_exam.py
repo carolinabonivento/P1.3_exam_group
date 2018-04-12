@@ -1,3 +1,4 @@
+# coding=utf-8
 '''
 Exam requests: 
 Write a class PostcardList that satisfies the tests (defined using unittest).
@@ -7,7 +8,6 @@ SPECIFICATIONS:
   formatted file: each record (i.e., file's line) is a Postcard. 
 - The Postcard format is "date:$(DATE); from:$(SENDER); to:$(RECEIVER);" 
   (e.g., "date:2009-12-24; from:Daisy; to:Donald;"). 
-
 Class PostcardList must manage the I/O file using:
  (1) writeFile(self,...)
  (2) readFile(self,...)
@@ -15,7 +15,6 @@ Class PostcardList must manage the I/O file using:
  (4) updateFile(self,...)
  (5) updateLists(self,...)
  (6) getNumberOfPostcards(self) => MISSING
-
 Class PostcardList must manage the sorting of dates/senders/receivers using: 
  (7) getPostcardsByDateRange(self,date_range): returns the postcards within 
      a date_range => MISSING
@@ -27,10 +26,10 @@ import unittest
 import datetime # module to deal with dates
 
 # ************************* Class for Postcard List *************************
-class PostcardList(object):
-    def __init__ (self):
+class PostcardList(object): 
+    def __init__ (self, postcards = None): # I can give the arguments with keywords
     # class constructor:
-    # - the "self" variable: instance of the object itself
+    # - the "self" variable: instance of the object itself 
     # - when calling PostcardList(), Py creates an object and passes it as
     #   the first parameter to the __init__ method.
     # Initialization:
@@ -38,7 +37,10 @@ class PostcardList(object):
     # - [] => list
     # - {} => dictionary (data structure mapping 1 value to another)
         self._file = None # file name
-        self._postcards = [] # list of postcards read from _file
+        if postcards is None: #None è oggetto speciale cm True o false
+           self._postcards = []
+        else:
+           self._postcards = postcards
         self._date = {} # key: string date; value: list of indices
         self._from = {} # key: string sender; value: list of indices
         self._to = {}  # key: string receiver; value: list of indices
@@ -54,7 +56,7 @@ class PostcardList(object):
                 
     def readFile(self,filename): # (2)
     # read from self._file read self.{_date,_from,_to}
-        with open(filename,'r') as f:
+        with open(filename) as f:             #read is the default of open so I do not need to write ,'r' .
             for line in f:
                 self._postcards.append(line)
             self._file = filename
@@ -64,9 +66,7 @@ class PostcardList(object):
     # parse self._postcards, set self.{_date,_from,_to}
         for i, postcard in enumerate(self._postcards):
             parts = postcard.split(';')
-            print(parts)
-            pp_date = parts[0].split(':')[1].strip()#;
-            print(pp_date)
+            pp_date = parts[0].split(':')[1].strip()#; print(pp_date)
             # strip: delete blanks before and after
             # print(pp_date[5:]) => the first 5 elements in a row + all rows
             # print(pp_date[:5]) => all the elements but at max 5 columns
@@ -104,49 +104,36 @@ class PostcardList(object):
           self.readFile(file2read)
 
 # -------------------------  Functions for Sorting -------------------------
-    def getPostcardsBySender(self,sender): # (8)
-    # returns the postcards from a sender
-        chosen_sender = []
-        for from_sender, lines in self._from.items():
-    # print(self._from.items()) => 
-    # dict_items([('Louie', [0]), ('Hook', [1, 8]), .... ('Alice', [15])])
-    # returns a list of dict's (key, value) tuple pairs
-    # https://www.tutorialspoint.com/python/dictionary_items.htm
-            if from_sender == sender:
-                chosen_sender += [self._postcards[l] for l in lines]
-        return chosen_sender
-
+    def  getPostcardsBySender(self, sender): #(8)
+        postcards_sender = []
+        if sender in self._from:
+            for from_sender in sorted(self._from[sender]):
+                postcards_sender.extend([self._postcards[from_sender]])
+        return postcards_sender  
       
 
     def  getPostcardsByReceiver(self, receiver): #(9) same as sender changing from with to
-        chosen_receiver = []
+        postcards_receiver = []
         if receiver in self._to:
-            #print(receiver)
             for to_receiver in sorted(self._to[receiver]):
-                #print(to_receiver)
-                chosen_receiver.append(self._postcards[to_receiver])
-                #print(chosen_receiver)
-        return chosen_receiver
+                postcards_receiver.extend([self._postcards[to_receiver]])
+        return postcards_receiver
+
 
     def getNumberOfPostcards(self): #(6)
         return len(self._postcards) #len returns the length of a list
         
 
-    def getPostcardsByDateRange(self,date_range): #(7)
-        in_range = []
+#select postcards le seleziona in base al dizionario (7)
+    def getPostcardsByDateRange (self, date_range):
+        day_postcards = []
         for day in self._date:
-            #print(day)
-            date = datetime.datetime.strptime(day, "%Y-%m-%d")
-            #print(date)
-            #print(date_range[0])
-            if date > date_range[0] and date < date_range[1]:
-                for i in self._date[day]:
-                    in_range.append(self._postcards[i])
-                    #print(self._postcards[i])
-                    #print(in_range)         
-            #else:
-                #print("non in range")
-        return in_range
+           date = datetime.datetime.strptime(day, "%Y-%m-%d")
+           if date_range[0] <= date <=date_range[1]:
+            day_postcards.extend([self._postcards[i] for i in self._date[day]]) #extend is faster and better than append
+        return day_postcards
+
+
 # ************************* Class for Unit tests *************************
 class Test(unittest.TestCase):
 
@@ -229,6 +216,8 @@ if __name__ == '__main__':
 
     unittest.main()
 
+    #PostcardListObject=PostcardList(postcards = None)
+    #PostcardListObject.readFile('exam_postcard_list0.txt')
+    #PostcardListObject.writeFile()
+    #print(PostcardListObject._postcards)
 
- 
-    
