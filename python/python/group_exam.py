@@ -8,19 +8,18 @@ SPECIFICATIONS:
   formatted file: each record (i.e., file's line) is a Postcard. 
 - The Postcard format is "date:$(DATE); from:$(SENDER); to:$(RECEIVER);" 
   (e.g., "date:2009-12-24; from:Daisy; to:Donald;"). 
-Class PostcardList must manage the I/O file using:
- (1) writeFile(self,...)
- (2) readFile(self,...)
- (3) parsePostcards(self,...) 
- (4) updateFile(self,...)
- (5) updateLists(self,...)
- (6) getNumberOfPostcards(self) => MISSING
-Class PostcardList must manage the sorting of dates/senders/receivers using: 
- (7) getPostcardsByDateRange(self,date_range): returns the postcards within 
-     a date_range => MISSING
- (8) getPostcardsBySender(self, sender): returns the postcards from a sender
- (9) getPostcardsByReceiver(self, receiver): returns the postcards to a receiver
-     => MISSING
+- Class PostcardList must manage the I/O file using:
+  (1) writeFile(self,...)
+  (2) readFile(self,...)
+  (3) parsePostcards(self,...) 
+  (4) updateFile(self,...)
+  (5) updateLists(self,...)
+  (6) getNumberOfPostcards(self)
+- Class PostcardList must manage the sorting of dates/senders/receivers using: 
+  (7) getPostcardsByDateRange(self,date_range): returns the postcards within 
+      a date_range
+  (8) getPostcardsBySender(self, sender): returns the postcards from a sender
+  (9) getPostcardsByReceiver(self, receiver): returns the postcards to a receiver
 '''
 import unittest
 import datetime # module to deal with dates
@@ -56,7 +55,8 @@ class PostcardList(object):
                 
     def readFile(self,filename): # (2)
     # read from self._file read self.{_date,_from,_to}
-        with open(filename) as f:             #read is the default of open so I do not need to write ,'r' .
+        with open(filename) as f:
+            #read is the default of open so I do not need to write ,'r' .
             for line in f:
                 self._postcards.append(line)
             self._file = filename
@@ -133,7 +133,26 @@ class PostcardList(object):
             day_postcards.extend([self._postcards[i] for i in self._date[day]]) #extend is faster and better than append
         return day_postcards
 
+'''
+if statement calling main()
+-------------------- Advantages --------------------
+- code will be cleaner, easier to read, and better organized
+- we can make Python behave like other languages, so more familiar for people
+- it will be possible to import that python code as a module
+  without nasty side-effects, and so
+ - it will be possible to run tests against that code
+ - we can import that code into an interactive python shell
+   and test/debug/run it
 
+-------------------- Disadvantages --------------------
+ Variables inside def main are local, while those outside it are global.
+ This may introduce a few bugs and unexpected behaviors.
+'''
+def main():
+    postcards = PostcardList()
+    postcards.readFile('exam_postcard_list0.txt')
+    print(postcards._file)
+    
 # ************************* Class for Unit tests *************************
 class Test(unittest.TestCase):
 
@@ -216,8 +235,10 @@ if __name__ == '__main__':
 
     unittest.main()
 
-    #PostcardListObject=PostcardList(postcards = None)
-    #PostcardListObject.readFile('exam_postcard_list0.txt')
-    #PostcardListObject.writeFile()
-    #print(PostcardListObject._postcards)
+    #PostcardListNew=PostcardList(None)
+    #PostcardListNew.readFile('exam_postcard_list0.txt')
+    #PostcardListNew.writeFile()
+    #print(PostcardListNew._postcards)
+
+
 
